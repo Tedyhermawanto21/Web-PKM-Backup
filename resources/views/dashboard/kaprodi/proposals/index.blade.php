@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Dashboard Kaprodi - PKM Center</title>
+    <title>Verifikasi Proposal - PKM Center</title>
 
     <!-- Custom fonts for this template-->
     <link href="{{ asset('dashboard-assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
@@ -34,7 +34,7 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{{ route('dashboard') }}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
@@ -50,7 +50,7 @@
             </div>
 
             <!-- Nav Item - Verifikasi Proposal -->
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link" href="{{ route('kaprodi.proposals.index') }}">
                     <i class="fas fa-fw fa-file-alt"></i>
                     <span>Verifikasi Proposal</span>
@@ -100,7 +100,8 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ $user->name }}</span>
+                                <span
+                                    class="mr-2 d-none d-lg-inline text-gray-600 small">{{ auth()->user()->name }}</span>
                                 <img class="img-profile rounded-circle"
                                     src="{{ asset('dashboard-assets/img/undraw_profile.svg') }}">
                             </a>
@@ -122,80 +123,101 @@
                 </nav>
                 <!-- End of Topbar -->
 
-                <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard Kaprodi</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Pengajuan PKM</h1>
                     </div>
 
-                    <!-- Content Row -->
-                    <div class="row">
-                        <!-- Profile Card -->
-                        <div class="col-xl-4 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Profil Kaprodi
-                                            </div>
-                                            <div class="h6 mb-0 font-weight-bold text-gray-800">{{ $user->name }}
-                                            </div>
-                                            <div class="text-xs text-gray-600">NIDN: {{ $user->nidn }}</div>
-                                            <div class="text-xs text-gray-600">Prodi: {{ $user->program_studi }}</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-user-tie fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="close" data-dismiss="alert">
+                                <span>&times;</span>
+                            </button>
+                        </div>
+                    @endif
+
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Daftar Proposal PKM Saya</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama Kelompok</th>
+                                            <th>Judul PKM</th>
+                                            <th>Skema</th>
+                                            <th>Dosen Pembimbing</th>
+                                            <th>Status Dosen</th>
+                                            <th>Status Kaprodi</th>
+                                            <th>Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($proposals as $index => $proposal)
+                                            <tr>
+                                                <td>{{ $index + 1 }}</td>
+                                                <td>{{ $proposal->nama_kelompok }}</td>
+                                                <td>{{ $proposal->judul_kelompok }}</td>
+                                                <td><span class="badge badge-info">{{ $proposal->skema }}</span></td>
+                                                <td>{{ $proposal->dosenPembimbing->name ?? '-' }}</td>
+                                                <td>
+                                                    @if ($proposal->status_dosen == 'disetujui')
+                                                        <span class="badge badge-success">Disetujui</span>
+                                                    @elseif($proposal->status_dosen == 'ditolak')
+                                                        <span class="badge badge-danger">Ditolak</span>
+                                                    @else
+                                                        <span class="badge badge-warning">Menunggu</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($proposal->status_kaprodi == 'disetujui')
+                                                        <span class="badge badge-success">Disetujui</span>
+                                                    @elseif($proposal->status_kaprodi == 'ditolak')
+                                                        <span class="badge badge-danger">Ditolak</span>
+                                                    @else
+                                                        <span class="badge badge-warning">Menunggu</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('kaprodi.proposals.show', $proposal->id) }}"
+                                                        class="btn btn-info btn-sm">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="7" class="text-center">Belum ada proposal yang perlu
+                                                    diverifikasi</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Welcome Card -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Selamat Datang, {{ $user->name }}!</h6>
-                        </div>
-                        <div class="card-body">
-                            <p>Sebagai Kepala Program Studi, Anda dapat:</p>
-                            <ul>
-                                <li>Memverifikasi proposal PKM dari program studi</li>
-                                <li>Melihat laporan dan statistik PKM</li>
-                                <li>Mengelola dosen pembimbing</li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
-                <!-- /.container-fluid -->
             </div>
-            <!-- End of Main Content -->
 
-            <!-- Footer -->
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; PKM Center 2025</span>
-                    </div>
+                    <div class="copyright text-center my-auto"><span>Copyright &copy; PKM Center 2025</span></div>
                 </div>
             </footer>
-            <!-- End of Footer -->
         </div>
-        <!-- End of Content Wrapper -->
     </div>
-    <!-- End of Page Wrapper -->
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade" id="logoutModal" tabindex="-1">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Yakin ingin keluar?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
+                    <h5 class="modal-title">Yakin ingin keluar?</h5>
+                    <button class="close" type="button" data-dismiss="modal">
+                        <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">Pilih "Logout" jika Anda ingin mengakhiri sesi.</div>

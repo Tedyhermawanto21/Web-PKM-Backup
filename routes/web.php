@@ -53,6 +53,7 @@ Route::middleware('auth')->group(function () {
     // Mahasiswa Routes
     Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
         Route::resource('proposals', App\Http\Controllers\Mahasiswa\ProposalController::class);
+        Route::resource('upload', App\Http\Controllers\Mahasiswa\UploadController::class);
     });
 
     // Dosen Routes
@@ -61,5 +62,25 @@ Route::middleware('auth')->group(function () {
         Route::get('proposals/{proposal}', [App\Http\Controllers\Dosen\ProposalApprovalController::class, 'show'])->name('proposals.show');
         Route::post('proposals/{proposal}/approve', [App\Http\Controllers\Dosen\ProposalApprovalController::class, 'approve'])->name('proposals.approve');
         Route::post('proposals/{proposal}/reject', [App\Http\Controllers\Dosen\ProposalApprovalController::class, 'reject'])->name('proposals.reject');
+    });
+
+    // Kaprodi Routes
+    Route::prefix('kaprodi')->name('kaprodi.')->group(function () {
+        Route::get('proposals', [App\Http\Controllers\Kaprodi\ProposalController::class, 'index'])->name('proposals.index');
+        Route::get('proposals/{proposal}', [App\Http\Controllers\Kaprodi\ProposalController::class, 'show'])->name('proposals.show');
+        Route::post('proposals/{proposal}/approve', [App\Http\Controllers\Kaprodi\ProposalController::class, 'approve'])->name('proposals.approve');
+        Route::post('proposals/{proposal}/reject', [App\Http\Controllers\Kaprodi\ProposalController::class, 'reject'])->name('proposals.reject');
+    });
+
+    // Admin Routes
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('proposals', [App\Http\Controllers\Admin\ProposalController::class, 'index'])->name('proposals.index');
+        Route::get('proposals/{proposal}', [App\Http\Controllers\Admin\ProposalController::class, 'show'])->name('proposals.show');
+        Route::post('proposals/{proposal}/approve', [App\Http\Controllers\Admin\ProposalController::class, 'approve'])->name('proposals.approve');
+        Route::post('proposals/{proposal}/reject', [App\Http\Controllers\Admin\ProposalController::class, 'reject'])->name('proposals.reject');
+        
+        // Schedule Management Routes
+        Route::resource('schedules', App\Http\Controllers\Admin\ScheduleController::class);
+        Route::patch('schedules/{schedule}/toggle-status', [App\Http\Controllers\Admin\ScheduleController::class, 'toggleStatus'])->name('schedules.toggle-status');
     });
 });

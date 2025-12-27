@@ -208,4 +208,48 @@ class ProposalController extends Controller
         return redirect()->route('mahasiswa.proposals.index')
             ->with('success', 'Proposal berhasil dihapus.');
     }
+
+    public function uploadForm()
+    {
+        $proposals = Proposal::where('ketua_id', Auth::id())
+            ->where('status_dosen', 'disetujui')
+            ->where('status_kaprodi', 'disetujui')
+            ->whereNull('file_proposal')
+            ->with(['dosenPembimbing'])
+            ->get();
+
+        return view('dashboard.mahasiswa.proposals.upload', compact('proposals'));
+    }
+
+    public function uploadStore(Request $request)
+    {
+        $request->validate([
+            'proposal_id' => 'required|exists:proposals,id',
+            'file_proposal' => 'required|file|mimes:pdf,doc,docx|max:5120'
+        ]);
+
+        $proposal = Proposal::findOrFail($request->proposal_id);
+
+        // Verify ownership
+        if ($proposal->ketua_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // Handle file upload
+        if ($request->hasFile('file_proposal')) {
+            $file = $request->file('file_proposal');
+            $fileName = time() . '_' . str_replace(' ', '_', $file->getClientOriginalName());
+            $filePath = $file->storeAs('proposals', $fileName, 'public');
+
+            $proposal->update([
+                'file_proposal' => $filePath,
+                'status_admin' => 'menunggu'
+            ]);
+
+            return redirect()->route('mahasiswa.proposals.upload')
+                ->with('success', 'File proposal berhasil diupload dan akan direview oleh admin.');
+        }
+
+        return redirect()->back()->with('error', 'Gagal mengupload file.');
+    }
 }

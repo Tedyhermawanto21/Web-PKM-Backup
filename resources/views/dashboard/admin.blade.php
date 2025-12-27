@@ -11,7 +11,7 @@
 
 <body id="page-top">
     <div id="wrapper">
-        <ul class="navbar-nav bg-gradient-danger sidebar sidebar-dark accordion">
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion">
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('dashboard') }}">
                 <div class="sidebar-brand-icon"><i class="fas fa-user-shield"></i></div>
                 <div class="sidebar-brand-text mx-3">PKM Center</div>
@@ -23,8 +23,12 @@
             </li>
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Menu Admin</div>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.proposals.index') }}"><i
+                        class="fas fa-fw fa-file-alt"></i><span>Review Proposal</span></a></li>
             <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-fw fa-users"></i><span>Manajemen
                         User</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ route('admin.schedules.index') }}"><i
+                        class="fas fa-fw fa-calendar-alt"></i><span>Kelola Jadwal</span></a></li>
             <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-fw fa-cog"></i><span>Pengaturan
                         Sistem</span></a></li>
         </ul>

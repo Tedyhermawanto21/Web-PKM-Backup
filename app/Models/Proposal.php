@@ -15,7 +15,14 @@ class Proposal extends Model
         'ketua_id',
         'dosen_pembimbing_id',
         'status',
-        'catatan_penolakan'
+        'catatan_penolakan',
+        'status_dosen',
+        'status_kaprodi',
+        'catatan_dosen',
+        'catatan_kaprodi',
+        'file_proposal',
+        'status_admin',
+        'catatan_admin'
     ];
 
     public function ketua(): BelongsTo

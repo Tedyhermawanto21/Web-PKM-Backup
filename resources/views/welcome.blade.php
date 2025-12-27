@@ -57,8 +57,8 @@
                     <li><a href="#testimonials">Testimonial</a></li>
                     <li><a href="#recent-posts">Blog</a></li>
                     <li><a href="#call-to-action">Kontak</a></li>
-                    <li><a href="{{ route('login') }}" class="btn-login"><i
-                                class="bi bi-box-arrow-in-right me-2"></i>Login Dashboard</a></li>
+                    <li><a href="{{ route('login') }}"><button type="button"
+                                class="btn btn-success">Login</button></a></li>
                 </ul>
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
