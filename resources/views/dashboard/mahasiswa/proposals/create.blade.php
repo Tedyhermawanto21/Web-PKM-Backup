@@ -1,182 +1,189 @@
-@extends('layouts.mahasiswa')
+@extends('layouts.app-modern')
 
 @section('title', 'Buat Proposal PKM')
 
 @section('content')
     <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Buat Proposal PKM Baru</h1>
-        <a href="{{ route('mahasiswa.proposals.index') }}"
-            class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
-            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Kembali
+    <div class="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800">Buat Proposal PKM Baru</h1>
+            <p class="text-slate-500">Isi formulir berikut untuk mengajukan proposal PKM baru.</p>
+        </div>
+        <a href="{{ route('mahasiswa.proposals.index') }}" class="inline-flex items-center px-4 py-2 bg-white text-slate-700 text-sm font-bold rounded-xl border border-slate-200 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md">
+            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            Kembali
         </a>
     </div>
 
     <!-- Alert Messages -->
     @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+        <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 flex items-center gap-3 text-red-700 animate-fade-in-down">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="font-medium">{{ session('error') }}</span>
         </div>
     @endif
 
     <!-- Form Card -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Formulir Proposal PKM</h6>
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="p-6 border-b border-slate-100 bg-slate-50">
+            <h6 class="font-bold text-slate-800">Formulir Proposal PKM</h6>
         </div>
-        <div class="card-body">
+        <div class="p-8">
             <form action="{{ route('mahasiswa.proposals.store') }}" method="POST">
                 @csrf
 
                 <!-- Informasi Kelompok -->
-                <div class="mb-4">
-                    <h5 class="text-primary border-bottom pb-2 mb-3">
-                        <i class="fas fa-users"></i> Informasi Kelompok
+                <div class="mb-10">
+                    <h5 class="text-lg font-bold text-uhamka-900 border-b border-slate-100 pb-3 mb-8 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-uhamka-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        Informasi Kelompok
                     </h5>
 
-                    <div class="form-group">
-                        <label for="nama_kelompok">Nama Kelompok <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @error('nama_kelompok') is-invalid @enderror"
-                            id="nama_kelompok" name="nama_kelompok" value="{{ old('nama_kelompok') }}"
-                            placeholder="Contoh: Tim Inovasi Teknologi" required>
-                        @error('nama_kelompok')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <label for="nama_kelompok" class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">Nama Kelompok <span class="text-red-500">*</span></label>
+                            <input type="text" class="w-full rounded-xl border-slate-300 bg-slate-50 text-slate-800 placeholder-slate-400 focus:bg-white focus:border-uhamka-500 focus:ring-4 focus:ring-uhamka-100 transition-all duration-200 py-3 px-4 shadow-sm @error('nama_kelompok') border-red-500 focus:ring-red-100 @enderror"
+                                id="nama_kelompok" name="nama_kelompok" value="{{ old('nama_kelompok') }}"
+                                placeholder="Contoh: Tim Inovasi Teknologi" required>
+                            @error('nama_kelompok')
+                                <p class="mt-2 text-sm text-red-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                    <div class="form-group">
-                        <label for="judul_kelompok">Judul PKM <span class="text-danger">*</span></label>
-                        <textarea class="form-control @error('judul_kelompok') is-invalid @enderror" id="judul_kelompok" name="judul_kelompok"
-                            rows="3" placeholder="Masukkan judul lengkap proposal PKM Anda" required>{{ old('judul_kelompok') }}</textarea>
-                        @error('judul_kelompok')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                        <div>
+                            <label for="judul_kelompok" class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">Judul PKM <span class="text-red-500">*</span></label>
+                            <textarea class="w-full rounded-xl border-slate-300 bg-slate-50 text-slate-800 placeholder-slate-400 focus:bg-white focus:border-uhamka-500 focus:ring-4 focus:ring-uhamka-100 transition-all duration-200 py-3 px-4 shadow-sm @error('judul_kelompok') border-red-500 focus:ring-red-100 @enderror" id="judul_kelompok" name="judul_kelompok"
+                                rows="3" placeholder="Masukkan judul lengkap proposal PKM Anda" required>{{ old('judul_kelompok') }}</textarea>
+                            @error('judul_kelompok')
+                                 <p class="mt-2 text-sm text-red-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                    <div class="form-group">
-                        <label for="skema">Skema PKM <span class="text-danger">*</span></label>
-                        <select class="form-control @error('skema') is-invalid @enderror" id="skema" name="skema"
-                            required>
-                            <option value="">-- Pilih Skema PKM --</option>
-                            <option value="PKM-KC" {{ old('skema') == 'PKM-KC' ? 'selected' : '' }}>
-                                PKM-KC (Karsa Cipta)</option>
-                            <option value="PKM-RE" {{ old('skema') == 'PKM-RE' ? 'selected' : '' }}>
-                                PKM-RE (Riset Eksakta)</option>
-                            <option value="PKM-GT" {{ old('skema') == 'PKM-GT' ? 'selected' : '' }}>
-                                PKM-GT (Gagasan Tertulis)</option>
-                            <option value="PKM-AI" {{ old('skema') == 'PKM-AI' ? 'selected' : '' }}>
-                                PKM-AI (Artikel Ilmiah)</option>
-                            <option value="PKM-PM" {{ old('skema') == 'PKM-PM' ? 'selected' : '' }}>
-                                PKM-PM (Pengabdian Masyarakat)</option>
-                            <option value="PKM-K" {{ old('skema') == 'PKM-K' ? 'selected' : '' }}>
-                                PKM-K (Kewirausahaan)</option>
-                            <option value="PKM-VGK" {{ old('skema') == 'PKM-VGK' ? 'selected' : '' }}>
-                                PKM-VGK (Video Gagasan Konstruktif)</option>
-                        </select>
-                        @error('skema')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <label for="skema" class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">Skema PKM <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <select class="w-full rounded-xl border-slate-300 bg-slate-50 text-slate-800 focus:bg-white focus:border-uhamka-500 focus:ring-4 focus:ring-uhamka-100 transition-all duration-200 py-3 px-4 shadow-sm appearance-none @error('skema') border-red-500 focus:ring-red-100 @enderror" id="skema" name="skema" required>
+                                        <option value="">-- Pilih Skema PKM --</option>
+                                        <option value="PKM-KC" {{ old('skema') == 'PKM-KC' ? 'selected' : '' }}>PKM-KC (Karsa Cipta)</option>
+                                        <option value="PKM-RE" {{ old('skema') == 'PKM-RE' ? 'selected' : '' }}>PKM-RE (Riset Eksakta)</option>
+                                        <option value="PKM-GT" {{ old('skema') == 'PKM-GT' ? 'selected' : '' }}>PKM-GT (Gagasan Tertulis)</option>
+                                        <option value="PKM-AI" {{ old('skema') == 'PKM-AI' ? 'selected' : '' }}>PKM-AI (Artikel Ilmiah)</option>
+                                        <option value="PKM-PM" {{ old('skema') == 'PKM-PM' ? 'selected' : '' }}>PKM-PM (Pengabdian Masyarakat)</option>
+                                        <option value="PKM-K" {{ old('skema') == 'PKM-K' ? 'selected' : '' }}>PKM-K (Kewirausahaan)</option>
+                                        <option value="PKM-VGK" {{ old('skema') == 'PKM-VGK' ? 'selected' : '' }}>PKM-VGK (Video Gagasan Konstruktif)</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    </div>
+                                </div>
+                                @error('skema')
+                                     <p class="mt-2 text-sm text-red-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>{{ $message }}</p>
+                                @enderror
+                            </div>
 
-                    <div class="form-group">
-                        <label for="dosen_pembimbing_id">Dosen Pembimbing <span class="text-danger">*</span></label>
-                        <select class="form-control @error('dosen_pembimbing_id') is-invalid @enderror"
-                            id="dosen_pembimbing_id" name="dosen_pembimbing_id" required>
-                            <option value="">-- Pilih Dosen Pembimbing --</option>
-                            @foreach ($dosens as $dosen)
-                                <option value="{{ $dosen->id }}"
-                                    {{ old('dosen_pembimbing_id') == $dosen->id ? 'selected' : '' }}>
-                                    {{ $dosen->name }} - {{ $dosen->program_studi }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <small class="form-text text-muted">
-                            <i class="fas fa-info-circle"></i> Proposal akan menunggu persetujuan dari
-                            dosen pembimbing yang dipilih
-                        </small>
-                        @error('dosen_pembimbing_id')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                            <div>
+                                <label for="dosen_pembimbing_id" class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">Dosen Pembimbing <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <select class="w-full rounded-xl border-slate-300 bg-slate-50 text-slate-800 focus:bg-white focus:border-uhamka-500 focus:ring-4 focus:ring-uhamka-100 transition-all duration-200 py-3 px-4 shadow-sm appearance-none @error('dosen_pembimbing_id') border-red-500 focus:ring-red-100 @enderror"
+                                        id="dosen_pembimbing_id" name="dosen_pembimbing_id" required>
+                                        <option value="">-- Pilih Dosen Pembimbing --</option>
+                                        @foreach ($dosens as $dosen)
+                                            <option value="{{ $dosen->id }}"
+                                                {{ old('dosen_pembimbing_id') == $dosen->id ? 'selected' : '' }}>
+                                                {{ $dosen->name }} - {{ $dosen->program_studi }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
+                                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                    </div>
+                                </div>
+                                <p class="mt-2 text-xs text-slate-500 flex items-center bg-blue-50 p-2 rounded-lg border border-blue-100 text-blue-700">
+                                    <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    Proposal akan menunggu persetujuan dari dosen pembimbing yang dipilih
+                                </p>
+                                @error('dosen_pembimbing_id')
+                                     <p class="mt-2 text-sm text-red-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Informasi Ketua -->
-                <div class="mb-4">
-                    <h5 class="text-primary border-bottom pb-2 mb-3">
-                        <i class="fas fa-user-tie"></i> Ketua Kelompok
+                <div class="mb-10">
+                    <h5 class="text-lg font-bold text-uhamka-900 border-b border-slate-100 pb-3 mb-8 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-uhamka-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        Ketua Kelompok
                     </h5>
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i>
-                        <strong>{{ Auth::user()->name }}</strong> ({{ Auth::user()->nim }}) -
-                        {{ Auth::user()->program_studi }}
-                        <br><small>Anda secara otomatis terdaftar sebagai ketua kelompok</small>
+                    <div class="bg-gradient-to-r from-blue-50 to-white border border-blue-100 rounded-2xl p-6 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="p-3 bg-blue-100 rounded-xl text-blue-600 shadow-inner">
+                             <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div>
+                             <p class="font-bold text-xl text-blue-900">{{ Auth::user()->name }}</p>
+                             <p class="text-blue-700 font-medium mb-1">{{ Auth::user()->nim }} • {{ Auth::user()->program_studi }}</p>
+                            <p class="text-sm text-blue-500 italic mt-2 bg-white/50 px-3 py-1 rounded-lg inline-block border border-blue-50">Anda secara otomatis terdaftar sebagai ketua kelompok</p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Anggota Kelompok -->
-                <div class="mb-4">
-                    <h5 class="text-primary border-bottom pb-2 mb-3">
-                        <i class="fas fa-users"></i> Anggota Kelompok (Maksimal 4 Anggota)
+                <div class="mb-10">
+                     <h5 class="text-lg font-bold text-uhamka-900 border-b border-slate-100 pb-3 mb-8 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-uhamka-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        Anggota Kelompok <span class="text-sm font-normal text-slate-500 ml-2">(Maksimal 4 Anggota)</span>
                     </h5>
 
-                    <div id="anggota-container">
+                    <div id="anggota-container" class="space-y-6">
                         @for ($i = 0; $i < 4; $i++)
-                            <div class="card mb-3 anggota-card">
-                                <div class="card-header bg-light">
-                                    <strong>Anggota {{ $i + 1 }}</strong>
+                            <div class="border border-slate-200 rounded-2xl p-6 relative bg-slate-50 anggota-card group hover:border-uhamka-300 hover:shadow-md transition-all duration-300">
+                                <div class="flex justify-between items-center mb-6">
+                                    <div class="flex items-center">
+                                        <span class="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-sm mr-3 group-hover:bg-uhamka-100 group-hover:text-uhamka-700 transition-colors">{{ $i + 1 }}</span>
+                                        <h6 class="font-bold text-slate-700 group-hover:text-uhamka-800 transition-colors">Anggota</h6>
+                                    </div>
                                     @if ($i > 0)
-                                        <button type="button" class="btn btn-sm btn-danger float-right remove-anggota">
-                                            <i class="fas fa-times"></i> Hapus
+                                        <button type="button" class="text-red-400 hover:text-red-600 text-sm font-bold flex items-center remove-anggota bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm hover:shadow active:scale-95 transition-all">
+                                            <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                            Hapus
                                         </button>
                                     @endif
                                 </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Nama <span class="text-danger">*</span></label>
-                                                <input type="text"
-                                                    class="form-control @error('anggota.' . $i . '.nama') is-invalid @enderror"
-                                                    name="anggota[{{ $i }}][nama]"
-                                                    value="{{ old('anggota.' . $i . '.nama') }}"
-                                                    placeholder="Nama lengkap anggota" required>
-                                                @error('anggota.' . $i . '.nama')
-                                                    <div class="invalid-feedback">{{ $message }}
-                                                    </div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>NIM <span class="text-danger">*</span></label>
-                                                <input type="text"
-                                                    class="form-control @error('anggota.' . $i . '.nim') is-invalid @enderror"
-                                                    name="anggota[{{ $i }}][nim]"
-                                                    value="{{ old('anggota.' . $i . '.nim') }}" placeholder="NIM anggota"
-                                                    required>
-                                                @error('anggota.' . $i . '.nim')
-                                                    <div class="invalid-feedback">{{ $message }}
-                                                    </div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Program Studi <span class="text-danger">*</span></label>
-                                                <input type="text"
-                                                    class="form-control @error('anggota.' . $i . '.program_studi') is-invalid @enderror"
-                                                    name="anggota[{{ $i }}][program_studi]"
-                                                    value="{{ old('anggota.' . $i . '.program_studi') }}"
-                                                    placeholder="Program studi anggota" required>
-                                                @error('anggota.' . $i . '.program_studi')
-                                                    <div class="invalid-feedback">{{ $message }}
-                                                    </div>
-                                                @enderror
-                                            </div>
-                                        </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2 tracking-wide">Nama <span class="text-red-500">*</span></label>
+                                        <input type="text"
+                                            class="w-full rounded-xl border-slate-300 bg-white focus:border-uhamka-500 focus:ring-4 focus:ring-uhamka-100 text-slate-800 py-3 px-4 shadow-sm transition-all @error('anggota.' . $i . '.nama') border-red-500 @enderror"
+                                            name="anggota[{{ $i }}][nama]"
+                                            value="{{ old('anggota.' . $i . '.nama') }}"
+                                            placeholder="Nama lengkap anggota" required>
+                                        @error('anggota.' . $i . '.nama')
+                                            <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2 tracking-wide">NIM <span class="text-red-500">*</span></label>
+                                        <input type="text"
+                                            class="w-full rounded-xl border-slate-300 bg-white focus:border-uhamka-500 focus:ring-4 focus:ring-uhamka-100 text-slate-800 py-3 px-4 shadow-sm transition-all @error('anggota.' . $i . '.nim') border-red-500 @enderror"
+                                            name="anggota[{{ $i }}][nim]"
+                                            value="{{ old('anggota.' . $i . '.nim') }}" placeholder="NIM anggota"
+                                            required>
+                                        @error('anggota.' . $i . '.nim')
+                                             <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2 tracking-wide">Program Studi <span class="text-red-500">*</span></label>
+                                        <input type="text"
+                                            class="w-full rounded-xl border-slate-300 bg-white focus:border-uhamka-500 focus:ring-4 focus:ring-uhamka-100 text-slate-800 py-3 px-4 shadow-sm transition-all @error('anggota.' . $i . '.program_studi') border-red-500 @enderror"
+                                            name="anggota[{{ $i }}][program_studi]"
+                                            value="{{ old('anggota.' . $i . '.program_studi') }}"
+                                            placeholder="Program studi anggota" required>
+                                        @error('anggota.' . $i . '.program_studi')
+                                             <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -185,12 +192,14 @@
                 </div>
 
                 <!-- Submit Button -->
-                <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-paper-plane"></i> Ajukan Proposal
+                <div class="flex items-center gap-4 pt-8 border-t border-slate-100">
+                    <button type="submit" class="inline-flex items-center px-8 py-4 bg-uhamka-600 text-white font-bold text-lg rounded-xl shadow-lg hover:bg-uhamka-700 hover:shadow-xl transition-all transform hover:-translate-y-1">
+                        <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                        Ajukan Proposal
                     </button>
-                    <a href="{{ route('mahasiswa.proposals.index') }}" class="btn btn-secondary btn-lg">
-                        <i class="fas fa-times"></i> Batal
+                    <a href="{{ route('mahasiswa.proposals.index') }}" class="inline-flex items-center px-8 py-4 bg-white text-slate-600 font-bold text-lg rounded-xl border border-slate-200 hover:bg-slate-50 hover:text-slate-800 transition-all">
+                        <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        Batal
                     </a>
                 </div>
             </form>
@@ -204,7 +213,10 @@
         $(document).ready(function() {
             // Handle remove anggota button
             $(document).on('click', '.remove-anggota', function() {
-                $(this).closest('.anggota-card').remove();
+                // Find closest .anggota-card and remove it
+                $(this).closest('.anggota-card').fadeOut(300, function() { 
+                    $(this).remove(); 
+                });
             });
         });
     </script>

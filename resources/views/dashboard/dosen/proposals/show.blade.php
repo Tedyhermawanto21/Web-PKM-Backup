@@ -1,141 +1,145 @@
-@extends('layouts.dosen')
+@extends('layouts.app-modern')
 
 @section('title', 'Detail Proposal')
 
 @section('content')
     <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Detail Proposal PKM</h1>
-        <a href="{{ route('dosen.proposals.index') }}" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
-            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Kembali
+    <div class="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800">Detail Proposal PKM</h1>
+            <p class="text-slate-500">Tinjau detail dan ambil keputusan verifikasi.</p>
+        </div>
+        <a href="{{ route('dosen.proposals.index') }}" class="inline-flex items-center px-4 py-2 bg-white text-slate-700 text-sm font-bold rounded-xl border border-slate-200 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md">
+            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            Kembali
         </a>
     </div>
 
     <!-- Alert Messages -->
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle"></i> {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+        <div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 flex items-center gap-3 text-green-700 animate-fade-in-down">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span class="font-medium">{{ session('success') }}</span>
         </div>
     @endif
 
     @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+        <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 flex items-center gap-3 text-red-700 animate-fade-in-down">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span class="font-medium">{{ session('error') }}</span>
         </div>
     @endif
 
-    <!-- Status Badge -->
-    <div class="row mb-4">
-        <div class="col-lg-12">
-            <div class="card shadow">
-                <div class="card-body text-center py-4">
-                    <h4 class="mb-3">Status Proposal</h4>
-                    @if ($proposal->status == 'menunggu_approval')
-                        <span class="badge badge-warning p-3" style="font-size: 1.2rem;">
-                            <i class="fas fa-clock"></i> Menunggu Approval
-                        </span>
-                        <p class="mt-3 text-muted">Proposal ini memerlukan persetujuan Anda</p>
-                    @elseif($proposal->status == 'disetujui')
-                        <span class="badge badge-success p-3" style="font-size: 1.2rem;">
-                            <i class="fas fa-check-circle"></i> Disetujui
-                        </span>
-                        <p class="mt-3 text-success font-weight-bold">Anda telah menyetujui proposal
-                            ini</p>
-                    @elseif($proposal->status == 'ditolak')
-                        <span class="badge badge-danger p-3" style="font-size: 1.2rem;">
-                            <i class="fas fa-times-circle"></i> Ditolak
-                        </span>
-                        <p class="mt-3 text-danger">Proposal ini telah ditolak</p>
-                        @if ($proposal->catatan_penolakan)
-                            <div class="alert alert-danger mt-3">
-                                <strong><i class="fas fa-info-circle"></i> Catatan
-                                    Penolakan:</strong><br>
-                                {{ $proposal->catatan_penolakan }}
-                            </div>
-                        @endif
-                    @endif
-                </div>
+    <!-- Status Badge Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 text-center mb-8">
+        <h4 class="text-lg font-bold text-slate-900 mb-6">Status Proposal</h4>
+        
+        @if ($proposal->status == 'menunggu_approval')
+            <div class="inline-flex flex-col items-center">
+                <span class="inline-flex items-center px-6 py-3 rounded-full text-lg font-bold bg-yellow-100 text-yellow-700 mb-4 animate-pulse">
+                    <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Menunggu Approval
+                </span>
+                <p class="text-slate-500">Proposal ini memerlukan persetujuan Anda</p>
             </div>
-        </div>
+        @elseif($proposal->status == 'disetujui')
+            <div class="inline-flex flex-col items-center">
+                 <span class="inline-flex items-center px-6 py-3 rounded-full text-lg font-bold bg-green-100 text-green-700 mb-4">
+                    <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Disetujui
+                </span>
+                <p class="text-green-600 font-bold">Anda telah menyetujui proposal ini</p>
+            </div>
+        @elseif($proposal->status == 'ditolak')
+            <div class="inline-flex flex-col items-center">
+                 <span class="inline-flex items-center px-6 py-3 rounded-full text-lg font-bold bg-red-100 text-red-700 mb-4">
+                    <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    Ditolak
+                </span>
+                <p class="text-red-500 font-bold">Proposal ini telah ditolak</p>
+                @if ($proposal->catatan_penolakan)
+                    <div class="mt-4 p-4 bg-red-50 rounded-xl border border-red-100 max-w-2xl text-left">
+                        <strong class="text-red-800 block mb-1"><i class="fas fa-info-circle mr-1"></i> Catatan Penolakan:</strong>
+                        <p class="text-red-700">{{ $proposal->catatan_penolakan }}</p>
+                    </div>
+                @endif
+            </div>
+        @endif
     </div>
 
-    <!-- Proposal Details -->
-    <div class="row">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <!-- Informasi Kelompok -->
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-header py-3 bg-primary text-white">
-                    <h6 class="m-0 font-weight-bold"><i class="fas fa-users"></i> Informasi Kelompok
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <table class="table table-borderless">
-                        <tr>
-                            <th width="40%">Nama Kelompok</th>
-                            <td>{{ $proposal->nama_kelompok }}</td>
-                        </tr>
-                        <tr>
-                            <th>Judul PKM</th>
-                            <td>{{ $proposal->judul_kelompok }}</td>
-                        </tr>
-                        <tr>
-                            <th>Skema</th>
-                            <td><span class="badge badge-info">{{ $proposal->skema }}</span></td>
-                        </tr>
-                        <tr>
-                            <th>Ketua Kelompok</th>
-                            <td>
-                                <strong>{{ $proposal->ketua->name }}</strong><br>
-                                <small class="text-muted">NIM: {{ $proposal->ketua->nim }}</small><br>
-                                <small class="text-muted">{{ $proposal->ketua->program_studi }}</small>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Tanggal Pengajuan</th>
-                            <td>{{ $proposal->created_at->format('d F Y, H:i') }}</td>
-                        </tr>
-                    </table>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden h-full">
+            <div class="bg-uhamka-900 px-6 py-4 border-b border-uhamka-800">
+                <h6 class="font-bold text-white flex items-center">
+                    <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    Informasi Kelompok
+                </h6>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Nama Kelompok</span>
+                        <p class="text-slate-800 font-semibold">{{ $proposal->nama_kelompok }}</p>
+                    </div>
+                    <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                         <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Judul PKM</span>
+                        <p class="text-slate-800 font-semibold leading-relaxed">{{ $proposal->judul_kelompok }}</p>
+                    </div>
+                    <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                         <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Skema</span>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {{ $proposal->skema }}
+                        </span>
+                    </div>
+                    <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                         <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Ketua Kelompok</span>
+                        <div class="flex items-center gap-3 mt-1">
+                             <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-sm font-bold text-slate-600">
+                                {{ substr($proposal->ketua->name, 0, 1) }}
+                            </div>
+                            <div>
+                                <p class="text-slate-900 font-bold">{{ $proposal->ketua->name }}</p>
+                                <p class="text-xs text-slate-500">{{ $proposal->ketua->nim }} • {{ $proposal->ketua->program_studi }}</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
+                         <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Tanggal Pengajuan</span>
+                        <p class="text-slate-800">{{ $proposal->created_at->format('d F Y, H:i') }}</p>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Daftar Anggota -->
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow h-100">
-                <div class="card-header py-3 bg-primary text-white">
-                    <h6 class="m-0 font-weight-bold"><i class="fas fa-user-friends"></i> Anggota
-                        Kelompok ({{ $proposal->anggota->count() }} Orang)</h6>
-                </div>
-                <div class="card-body">
-                    <div class="list-group">
-                        @foreach ($proposal->anggota as $index => $anggota)
-                            <div class="list-group-item">
-                                <div class="d-flex w-100 justify-content-between align-items-center">
-                                    <div>
-                                        <h6 class="mb-1">
-                                            @if ($anggota->posisi == 'ketua')
-                                                <span class="badge badge-primary mr-2">Ketua</span>
-                                            @else
-                                                <span class="badge badge-secondary mr-2">Anggota
-                                                    {{ $index }}</span>
-                                            @endif
-                                            {{ $anggota->nama }}
-                                        </h6>
-                                        <p class="mb-0"><small class="text-muted">NIM:
-                                                {{ $anggota->nim }}</small></p>
-                                        <p class="mb-0"><small class="text-muted">{{ $anggota->program_studi }}</small>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
+         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden h-full">
+            <div class="bg-uhamka-900 px-6 py-4 border-b border-uhamka-800">
+                 <h6 class="font-bold text-white flex items-center">
+                    <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    Anggota Kelompok <span class="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-xs">{{ $proposal->anggota->count() }} Orang</span>
+                </h6>
+            </div>
+             <div class="p-6">
+                <div class="space-y-4">
+                     @foreach ($proposal->anggota as $index => $anggota)
+                         <div class="flex items-center p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                             <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold mr-4">
+                                {{ $index + 1 }}
+                             </div>
+                             <div>
+                                 <div class="flex items-center gap-2 mb-1">
+                                    @if ($anggota->posisi == 'ketua')
+                                        <span class="px-2 py-0.5 bg-uhamka-100 text-uhamka-700 text-[10px] font-bold uppercase rounded-md">Ketua</span>
+                                    @else
+                                        <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold uppercase rounded-md">Anggota</span>
+                                    @endif
+                                    <h6 class="font-bold text-slate-900">{{ $anggota->nama }}</h6>
+                                 </div>
+                                 <p class="text-xs text-slate-500">{{ $anggota->nim }} • {{ $anggota->program_studi }}</p>
+                             </div>
+                         </div>
+                     @endforeach
                 </div>
             </div>
         </div>
@@ -143,52 +147,29 @@
 
     <!-- Approval Actions -->
     @if ($proposal->status == 'menunggu_approval')
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card shadow border-left-warning">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-warning">
-                            <i class="fas fa-exclamation-triangle"></i> Tindakan Diperlukan
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <p class="mb-4">Silakan tinjau proposal ini dan pilih tindakan yang sesuai:
-                        </p>
+        <div class="bg-orange-50 border-l-4 border-orange-400 p-8 rounded-r-2xl shadow-sm mb-8">
+            <div class="flex items-start gap-4">
+                 <div class="p-3 bg-orange-100 rounded-full text-orange-600">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                </div>
+                <div>
+                    <h5 class="text-lg font-bold text-orange-800 mb-2">Tindakan Diperlukan</h5>
+                    <p class="text-orange-700 mb-6 max-w-2xl">Silakan tinjau proposal ini dan pilih tindakan yang sesuai. Keputusan Anda akan menentukan langkah selanjutnya bagi mahasiswa.</p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                         <form action="{{ route('dosen.proposals.approve', $proposal->id) }}" method="POST"
+                            onsubmit="return confirm('Apakah Anda yakin ingin menyetujui proposal ini dan menjadi dosen pembimbing?')">
+                            @csrf
+                            <button type="submit" class="inline-flex items-center px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
+                                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                Setujui Proposal
+                            </button>
+                        </form>
 
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <div class="card border-success">
-                                    <div class="card-body text-center">
-                                        <h5 class="text-success"><i class="fas fa-check-circle"></i>
-                                            Setujui Proposal</h5>
-                                        <p class="text-muted">Dengan menyetujui, Anda akan menjadi
-                                            dosen pembimbing kelompok ini.</p>
-                                        <form action="{{ route('dosen.proposals.approve', $proposal->id) }}" method="POST"
-                                            onsubmit="return confirm('Apakah Anda yakin ingin menyetujui proposal ini dan menjadi dosen pembimbing?')">
-                                            @csrf
-                                            <button type="submit" class="btn btn-success btn-lg">
-                                                <i class="fas fa-check"></i> Setujui Proposal
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 mb-3">
-                                <div class="card border-danger">
-                                    <div class="card-body text-center">
-                                        <h5 class="text-danger"><i class="fas fa-times-circle"></i>
-                                            Tolak Proposal</h5>
-                                        <p class="text-muted">Berikan alasan penolakan untuk membantu
-                                            mahasiswa.</p>
-                                        <button type="button" class="btn btn-danger btn-lg" data-toggle="modal"
-                                            data-target="#rejectModal">
-                                            <i class="fas fa-times"></i> Tolak Proposal
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                         <button type="button" onclick="document.getElementById('rejectModal').classList.remove('hidden')" class="inline-flex items-center px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
+                            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            Tolak Proposal
+                        </button>
                     </div>
                 </div>
             </div>
@@ -197,38 +178,42 @@
 
 @endsection
 
-@push('modals')
-    <!-- Reject Modal -->
-    <div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
+@push('scripts')
+    <!-- Reject Data -->
+     <div id="rejectModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Background overlay -->
+            <div class="fixed inset-0 bg-slate-900 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="document.getElementById('rejectModal').classList.add('hidden')"></div>
+
+            <!-- Modal panel -->
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <form action="{{ route('dosen.proposals.reject', $proposal->id) }}" method="POST">
                     @csrf
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title" id="rejectModalLabel">
-                            <i class="fas fa-times-circle"></i> Tolak Proposal
-                        </h5>
-                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="catatan_penolakan">Alasan Penolakan <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="catatan_penolakan" name="catatan_penolakan" rows="5" required
-                                placeholder="Berikan alasan yang jelas mengapa proposal ini ditolak. Ini akan membantu mahasiswa untuk memperbaiki proposal mereka."></textarea>
-                            <small class="form-text text-muted">
-                                <i class="fas fa-info-circle"></i> Catatan ini akan dikirimkan kepada ketua kelompok.
-                            </small>
+                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                <h3 class="text-lg leading-6 font-medium text-slate-900" id="modal-title">Tolak Proposal</h3>
+                                <div class="mt-2 text-sm text-slate-500 mb-4">
+                                     <p>Berikan alasan penolakan untuk membantu mahasiswa memperbaiki proposal mereka.</p>
+                                </div>
+                                
+                                <label for="catatan_penolakan" class="block text-sm font-medium text-slate-700 mb-2">Alasan Penolakan <span class="text-red-500">*</span></label>
+                                <textarea id="catatan_penolakan" name="catatan_penolakan" rows="4" class="shadow-sm focus:ring-uhamka-500 focus:border-uhamka-500 mt-1 block w-full sm:text-sm border border-slate-300 rounded-xl p-3" placeholder="Contoh: Judul tidak sesuai dengan skema, metodologi kurang jelas..." required></textarea>
+                            </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                            <i class="fas fa-times"></i> Batal
+                    <div class="bg-slate-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <button type="submit" class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                            Kirim Penolakan
                         </button>
-                        <button type="submit" class="btn btn-danger">
-                            <i class="fas fa-paper-plane"></i> Kirim Penolakan
+                        <button type="button" onclick="document.getElementById('rejectModal').classList.add('hidden')" class="mt-3 w-full inline-flex justify-center rounded-xl border border-slate-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-uhamka-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            Batal
                         </button>
                     </div>
                 </form>

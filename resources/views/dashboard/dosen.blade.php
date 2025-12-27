@@ -1,123 +1,99 @@
-@extends('layouts.dosen')
+@extends('layouts.app-modern')
 
 @section('title', 'Dashboard Dosen')
 
 @section('content')
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Dashboard Dosen</h1>
+<!-- Welcome Banner -->
+<div class="relative w-full rounded-3xl overflow-hidden bg-gradient-to-r from-uhamka-900 via-uhamka-800 to-uhamka-900 shadow-2xl mb-8 group">
+    <!-- Background Decor -->
+    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-uhamka-yellow-400 rounded-full mix-blend-overlay filter blur-3xl opacity-20 animate-blob"></div>
+
+    <div class="relative z-10 p-8 sm:p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full mb-4">
+                <span class="w-2 h-2 rounded-full bg-uhamka-yellow-400 animate-pulse"></span>
+                <span class="text-xs font-bold text-white uppercase tracking-wider">Dosen Pembimbing</span>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-bold text-white mb-2 leading-tight">
+                Selamat Datang, <br>
+                <span class="text-uhamka-yellow-400">{{ $user->name }}</span>
+            </h1>
+            <p class="text-uhamka-100 max-w-lg text-sm sm:text-base leading-relaxed">
+                NIDN: {{ $user->nidn ?? '-' }} | Prodi: {{ $user->program_studi ?? '-' }}
+            </p>
+        </div>
     </div>
+</div>
 
-    <!-- Statistics Cards Row -->
-    <div class="row">
-        <!-- Proposal Perlu Review Card -->
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Menunggu Approval</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ $user->proposalsAsDosen()->where('status', 'menunggu_approval')->count() }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-clock fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
+<!-- Alert for Pending Reviews -->
+@if ($user->proposalsAsDosen()->where('status', 'menunggu_approval')->count() > 0)
+<div class="mb-8 p-4 rounded-2xl bg-uhamka-yellow-50 border border-uhamka-yellow-200 flex items-start sm:items-center gap-4 shadow-sm animate-pulse-slow">
+    <div class="w-10 h-10 rounded-full bg-uhamka-yellow-100 flex items-center justify-center text-uhamka-yellow-600 flex-shrink-0">
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    </div>
+    <div class="flex-1">
+        <h3 class="font-bold text-uhamka-yellow-800">Perhatian!</h3>
+        <p class="text-sm text-uhamka-yellow-700">
+            Anda memiliki <span class="font-bold">{{ $user->proposalsAsDosen()->where('status', 'menunggu_approval')->count() }} proposal</span> yang menunggu review Anda.
+        </p>
+    </div>
+    <a href="{{ route('dosen.proposals.index') }}" class="px-4 py-2 bg-uhamka-yellow-400 text-uhamka-900 font-bold text-sm rounded-lg hover:bg-uhamka-yellow-500 transition-colors shadow-sm">
+        Review Sekarang
+    </a>
+</div>
+@endif
+
+<!-- Stats Cards (Bento Grid) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <!-- Menunggu Approval -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-uhamka-yellow-200 transition-all group">
+        <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-500 text-xl group-hover:scale-110 transition-transform">
+                ⏳
             </div>
+            <span class="px-3 py-1 bg-orange-50 text-orange-600 text-xs font-bold rounded-lg uppercase tracking-wider">Menunggu Approval</span>
         </div>
-
-        <!-- Disetujui Card -->
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Disetujui</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ $user->proposalsAsDosen()->where('status', 'disetujui')->count() }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Ditolak Card -->
-        <div class="col-xl-4 col-md-6 mb-4">
-            <div class="card border-left-danger shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                Ditolak</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                {{ $user->proposalsAsDosen()->where('status', 'ditolak')->count() }}
-                            </div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-times-circle fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="flex items-baseline gap-2">
+            <span class="text-4xl font-extrabold text-slate-900">{{ $user->proposalsAsDosen()->where('status', 'menunggu_approval')->count() }}</span>
         </div>
     </div>
 
-    <!-- Alert if proposals pending -->
-    @if ($user->proposalsAsDosen()->where('status', 'menunggu_approval')->count() > 0)
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-triangle"></i>
-            <strong>Perhatian!</strong> Anda memiliki
-            <strong>{{ $user->proposalsAsDosen()->where('status', 'menunggu_approval')->count() }}</strong>
-            proposal yang menunggu review Anda.
-            <a href="{{ route('dosen.proposals.index') }}" class="alert-link">Klik di
-                sini untuk mereview</a>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-
-    <!-- Welcome Card -->
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Selamat Datang,
-                        {{ $user->name }}!</h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <p class="mb-2"><strong>NIDN:</strong>
-                                {{ $user->nidn }}</p>
-                            <p class="mb-2"><strong>Program Studi:</strong>
-                                {{ $user->program_studi }}</p>
-                            <hr>
-                            <p class="mb-2">Sebagai dosen pembimbing, Anda dapat:</p>
-                            <ul class="mb-0">
-                                <li>Mereview dan menyetujui/menolak proposal PKM
-                                    mahasiswa</li>
-                                <li>Membimbing kelompok PKM mahasiswa</li>
-                                <li>Memberikan review dan masukan pada proposal</li>
-                                <li>Memantau progress kelompok bimbingan</li>
-                            </ul>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <i class="fas fa-chalkboard-teacher fa-5x text-gray-300 mb-3"></i>
-                            <p class="text-muted">Dosen Pembimbing PKM</p>
-                        </div>
-                    </div>
-                </div>
+    <!-- Disetujui -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-green-200 transition-all group">
+        <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-600 text-xl group-hover:scale-110 transition-transform">
+                ✅
             </div>
+            <span class="px-3 py-1 bg-green-50 text-green-600 text-xs font-bold rounded-lg uppercase tracking-wider">Disetujui</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+            <span class="text-4xl font-extrabold text-slate-900">{{ $user->proposalsAsDosen()->where('status', 'disetujui')->count() }}</span>
         </div>
     </div>
+
+    <!-- Ditolak -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-red-200 transition-all group">
+        <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center text-red-500 text-xl group-hover:scale-110 transition-transform">
+                ❌
+            </div>
+             <span class="px-3 py-1 bg-red-50 text-red-600 text-xs font-bold rounded-lg uppercase tracking-wider">Ditolak</span>
+        </div>
+        <div class="flex items-baseline gap-2">
+            <span class="text-4xl font-extrabold text-slate-900">{{ $user->proposalsAsDosen()->where('status', 'ditolak')->count() }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Info Panel -->
+<div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+    <h3 class="font-bold text-xl text-slate-900 mb-2">Informasi Dosen</h3>
+    <p class="text-slate-500 mb-4">Sebagai dosen pembimbing, Anda dapat:</p>
+    <ul class="list-disc list-inside text-slate-600 space-y-2">
+        <li>Mereview dan menyetujui/menolak proposal PKM mahasiswa</li>
+        <li>Membimbing kelompok PKM mahasiswa</li>
+        <li>Memberikan review dan masukan pada proposal</li>
+        <li>Memantau progress kelompok bimbingan</li>
+    </ul>
+</div>
 @endsection
