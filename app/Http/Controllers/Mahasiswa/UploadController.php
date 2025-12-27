@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Mahasiswa;
 
 use App\Http\Controllers\Controller;
 use App\Models\Proposal;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -19,11 +20,28 @@ class UploadController extends Controller
             ->latest()
             ->get();
 
-        return view('dashboard.mahasiswa.upload.index', compact('uploadedProposals'));
+        // Check if upload schedule is active
+        $uploadSchedule = Schedule::ofType(Schedule::TYPE_UPLOAD_PROPOSAL)
+            ->active()
+            ->ongoing()
+            ->first();
+
+        return view('dashboard.mahasiswa.upload.index', compact('uploadedProposals', 'uploadSchedule'));
     }
 
     public function create()
     {
+        // Check if upload schedule is active
+        $uploadSchedule = Schedule::ofType(Schedule::TYPE_UPLOAD_PROPOSAL)
+            ->active()
+            ->ongoing()
+            ->first();
+
+        if (!$uploadSchedule) {
+            return redirect()->route('mahasiswa.upload.index')
+                ->with('error', 'Jadwal upload proposal belum dibuka atau sudah ditutup.');
+        }
+
         // Get proposals ready for upload (approved by dosen and kaprodi, no file yet)
         $proposals = Proposal::where('ketua_id', Auth::id())
             ->where('status_dosen', 'disetujui')
@@ -35,11 +53,21 @@ class UploadController extends Controller
             ->with(['dosenPembimbing'])
             ->get();
 
-        return view('dashboard.mahasiswa.upload.create', compact('proposals'));
+        return view('dashboard.mahasiswa.upload.create', compact('proposals', 'uploadSchedule'));
     }
 
     public function store(Request $request)
     {
+        // Check if upload schedule is active
+        $uploadSchedule = Schedule::ofType(Schedule::TYPE_UPLOAD_PROPOSAL)
+            ->active()
+            ->ongoing()
+            ->first();
+
+        if (!$uploadSchedule) {
+            return redirect()->back()->with('error', 'Jadwal upload proposal belum dibuka atau sudah ditutup.');
+        }
+
         $request->validate([
             'proposal_id' => 'required|exists:proposals,id',
             'file_proposal' => 'required|file|mimes:pdf,doc,docx|max:5120'
@@ -99,10 +127,24 @@ class UploadController extends Controller
             abort(403);
         }
 
-        // Only allow edit if rejected by admin
-        if ($upload->status_admin !== 'ditolak') {
+        // Only allow edit if rejected by admin or in revision stage
+        if ($upload->status_admin !== 'ditolak' && $upload->revision_stage == 0) {
             return redirect()->route('mahasiswa.upload.index')
                 ->with('error', 'Proposal ini tidak dapat diedit.');
+        }
+
+        // Check if revision schedule is active (if in revision stage)
+        if ($upload->revision_stage > 0) {
+            $revisionType = 'revisi_' . $upload->revision_stage;
+            $revisionSchedule = Schedule::ofType($revisionType)
+                ->active()
+                ->ongoing()
+                ->first();
+
+            if (!$revisionSchedule) {
+                return redirect()->route('mahasiswa.upload.index')
+                    ->with('error', 'Jadwal revisi tahap ' . $upload->revision_stage . ' belum dibuka atau sudah ditutup.');
+            }
         }
 
         $proposal = $upload->load(['dosenPembimbing']);
@@ -117,10 +159,24 @@ class UploadController extends Controller
             abort(403);
         }
 
-        // Only allow update if rejected by admin
-        if ($upload->status_admin !== 'ditolak') {
+        // Only allow update if rejected by admin or in revision stage
+        if ($upload->status_admin !== 'ditolak' && $upload->revision_stage == 0) {
             return redirect()->route('mahasiswa.upload.index')
                 ->with('error', 'Proposal ini tidak dapat diupdate.');
+        }
+
+        // Check if revision schedule is active (if in revision stage)
+        if ($upload->revision_stage > 0) {
+            $revisionType = 'revisi_' . $upload->revision_stage;
+            $revisionSchedule = Schedule::ofType($revisionType)
+                ->active()
+                ->ongoing()
+                ->first();
+
+            if (!$revisionSchedule) {
+                return redirect()->back()
+                    ->with('error', 'Jadwal revisi tahap ' . $upload->revision_stage . ' belum dibuka atau sudah ditutup.');
+            }
         }
 
         $request->validate([

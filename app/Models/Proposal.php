@@ -22,7 +22,9 @@ class Proposal extends Model
         'catatan_kaprodi',
         'file_proposal',
         'status_admin',
-        'catatan_admin'
+        'catatan_admin',
+        'revision_stage',
+        'revision_notes'
     ];
 
     public function ketua(): BelongsTo
