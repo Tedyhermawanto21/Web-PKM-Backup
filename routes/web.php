@@ -5,7 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing');
 });
 
 // Test route sederhana
@@ -21,11 +21,10 @@ Route::get('/test-auth', function() {
     return 'Not logged in. Session ID: ' . session()->getId();
 });
 
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
-
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.process');
+
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function() {
@@ -64,5 +63,3 @@ Route::middleware('auth')->group(function () {
         Route::post('proposals/{proposal}/reject', [App\Http\Controllers\Dosen\ProposalApprovalController::class, 'reject'])->name('proposals.reject');
     });
 });
-
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');

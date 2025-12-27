@@ -1,117 +1,114 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="id">
 <head>
-
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>PKM Center - Login Dashboard</title>
-
-    <!-- Custom fonts for this template-->
-    <link href="{{ asset('dashboard-assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
-
-    <!-- Custom styles for this template-->
-    <link href="{{ asset('dashboard-assets/css/sb-admin-2.min.css') }}" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Masuk - PKM Center UHAMKA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
 </head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 selection:bg-uhamka-gold selection:text-white">
 
-<body class="bg-gradient-primary">
+    <div class="w-full max-w-6xl mx-auto flex bg-white rounded-[2rem] shadow-2xl overflow-hidden min-h-[600px] border border-slate-100">
+        
+        <!-- Left Side: Visual Brand (40%) -->
+        <div class="hidden lg:flex lg:w-5/12 bg-uhamka-900 relative flex-col justify-between p-12 overflow-hidden">
+            <!-- Background Decoration -->
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-uhamka-800 rounded-full blur-3xl opacity-50"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-60 h-60 bg-uhamka-gold-600 rounded-full blur-3xl opacity-20"></div>
+            <div class="absolute inset-0 bg-gradient-to-br from-uhamka-900/90 to-uhamka-900/40 z-10"></div>
+            <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover grayscale opacity-30" alt="University Vibe">
 
-    <div class="container">
-
-        <!-- Outer Row -->
-        <div class="row justify-content-center">
-
-            <div class="col-xl-10 col-lg-12 col-md-9">
-
-                <div class="card o-hidden border-0 shadow-lg my-5">
-                    <div class="card-body p-0">
-                        <!-- Nested Row within Card Body -->
-                        <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
-                            <div class="col-lg-6">
-                                <div class="p-5">
-                                    <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Selamat Datang!</h1>
-                                        <p class="mb-4">Silakan login ke Dashboard PKM Center</p>
-                                    </div>
-
-                                    @if ($errors->any())
-                                        <div class="alert alert-danger">
-                                            <ul class="mb-0">
-                                                @foreach ($errors->all() as $error)
-                                                    <li>{{ $error }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    @endif
-
-                                    @if (session('error'))
-                                        <div class="alert alert-danger">
-                                            {{ session('error') }}
-                                        </div>
-                                    @endif
-
-                                    <form class="user" method="POST" action="{{ route('login.process') }}">
-                                        @csrf
-                                        <div class="form-group">
-                                            <input type="email" name="email" class="form-control form-control-user"
-                                                id="exampleInputEmail" aria-describedby="emailHelp"
-                                                placeholder="Email Address" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="password" name="password"
-                                                class="form-control form-control-user" id="exampleInputPassword"
-                                                placeholder="Password" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck"
-                                                    name="remember">
-                                                <label class="custom-control-label" for="customCheck">Ingat Saya</label>
-                                            </div>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary btn-user btn-block">
-                                            Login
-                                        </button>
-                                        <hr>
-                                        <a href="{{ url('/') }}" class="btn btn-secondary btn-user btn-block">
-                                            <i class="fas fa-arrow-left fa-fw"></i> Kembali ke Beranda
-                                        </a>
-                                    </form>
-                                    <hr>
-                                    <div class="text-center">
-                                        <a class="small" href="#">Lupa Password?</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+            <!-- Content -->
+            <div class="relative z-20">
+                <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-uhamka-900 font-serif font-bold text-2xl shadow-lg mb-6">U</div>
+                <h2 class="text-3xl font-extrabold text-white leading-tight">
+                    Academic Innovation Hub
+                </h2>
+                <p class="text-uhamka-200 mt-4 text-sm leading-relaxed">
+                    Bergabunglah dengan ribuan mahasiswa inovatif UHAMKA lainnya. Wujudkan ide kreatifmu menuju PIMNAS 2025.
+                </p>
             </div>
 
+            <div class="relative z-20">
+                <div class="flex items-center gap-3 bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/10">
+                    <div class="text-4xl">🏆</div>
+                    <div>
+                        <p class="text-uhamka-gold-400 text-xs font-bold uppercase tracking-wider">Target 2025</p>
+                        <p class="text-white font-bold">Juara Umum PIMNAS</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <!-- Right Side: Login Form (60%) -->
+        <div class="w-full lg:w-7/12 p-8 sm:p-12 lg:p-16 flex flex-col justify-center">
+            <div class="max-w-md mx-auto w-full">
+                
+                <div class="text-left mb-10">
+                    <h1 class="text-3xl font-extrabold text-slate-900 mb-2">Selamat Datang Kembali!</h1>
+                    <p class="text-slate-500">Silakan masuk untuk mengakses Dashboard PKM.</p>
+                </div>
+
+                <!-- Error Handling -->
+                @if ($errors->any())
+                    <div class="mb-6 bg-red-50 border border-red-100 text-red-600 p-4 rounded-xl text-sm flex items-start gap-3">
+                        <svg class="w-5 h-5 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="mb-6 bg-red-50 border border-red-100 text-red-600 p-4 rounded-xl text-sm flex items-center gap-3">
+                        <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        {{ session('error') }}
+                    </div>
+                @endif
+
+                <form class="space-y-6" method="POST" action="{{ route('login.process') }}">
+                    @csrf
+                    
+                    <div>
+                        <label for="email" class="block text-sm font-bold text-slate-700 mb-2">Alamat Email</label>
+                        <input type="email" name="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-uhamka-700 focus:ring-4 focus:ring-uhamka-700/10 transition-all outline-none text-slate-900 placeholder-slate-400 font-medium" placeholder="nama@uhamka.ac.id">
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-sm font-bold text-slate-700 mb-2">Password</label>
+                        <input type="password" name="password" id="password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-uhamka-700 focus:ring-4 focus:ring-uhamka-700/10 transition-all outline-none text-slate-900 placeholder-slate-400 font-medium" placeholder="••••••••">
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input type="checkbox" name="remember" id="remember" class="w-4 h-4 rounded text-uhamka-700 border-slate-300 focus:ring-uhamka-700">
+                            <label for="remember" class="ml-2 block text-sm text-slate-600 font-medium">Ingat Saya</label>
+                        </div>
+                        <a href="#" class="text-xs font-bold text-uhamka-600 hover:text-uhamka-800 transition-colors">Lupa Password?</a>
+                    </div>
+
+                    <div class="space-y-4 pt-4">
+                        <button type="submit" class="w-full py-3 px-4 bg-uhamka-700 hover:bg-uhamka-800 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                            Masuk
+                        </button>
+                        
+                        <a href="{{ url('/') }}" class="w-full block text-center py-3 px-4 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 hover:text-slate-900 transition-all">
+                            Kembali ke Beranda
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
     </div>
 
-    <!-- Bootstrap core JavaScript-->
-    <script src="{{ asset('dashboard-assets/vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('dashboard-assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="{{ asset('dashboard-assets/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="{{ asset('dashboard-assets/js/sb-admin-2.min.js') }}"></script>
-
 </body>
-
 </html>
