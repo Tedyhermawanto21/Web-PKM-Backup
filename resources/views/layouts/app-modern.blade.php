@@ -76,29 +76,44 @@
                         </svg>
                         Dashboard
                     </a>
-                    <a href="{{ Route::has('mahasiswa.kelompoks.index') ? route('mahasiswa.kelompoks.index') : '#' }}"
-                        class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('mahasiswa.kelompoks.*') ? 'sidebar-active' : '' }}">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        Kelompok PKM Saya
+                    @if (Route::has('mahasiswa.kelompoks.index'))
+                        <a href="{{ route('mahasiswa.kelompoks.index') }}"
+                            class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('mahasiswa.kelompoks.*') ? 'sidebar-active' : '' }}">
+                        @else
+                            <a href="#"
+                                class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('mahasiswa.kelompoks.*') ? 'sidebar-active' : '' }}">
+                    @endif
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    Kelompok PKM Saya
                     </a>
-                    <a href="{{ Route::has('mahasiswa.pengajuan_kelompok_pkm.index') ? route('mahasiswa.pengajuan_kelompok_pkm.index') : '#' }}"
-                        class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('mahasiswa.pengajuan_kelompok_pkm.*') ? 'sidebar-active' : '' }}">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Pengajuan Proposal
+                    @if (Route::has('mahasiswa.pengajuan_kelompok_pkm.index'))
+                        <a href="{{ route('mahasiswa.pengajuan_kelompok_pkm.index') }}"
+                            class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('mahasiswa.pengajuan_kelompok_pkm.*') ? 'sidebar-active' : '' }}">
+                        @else
+                            <a href="#"
+                                class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('mahasiswa.pengajuan_kelompok_pkm.*') ? 'sidebar-active' : '' }}">
+                    @endif
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Pengajuan Proposal
                     </a>
-                    <a href="{{ Route::has('mahasiswa.upload.index') ? route('mahasiswa.upload.index') : '#' }}"
-                        class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('mahasiswa.upload.*') ? 'sidebar-active' : '' }}">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12" />
-                        </svg>
-                        Upload Proposal
+                    @if (Route::has('mahasiswa.upload.index'))
+                        <a href="{{ route('mahasiswa.upload.index') }}"
+                            class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('mahasiswa.upload.*') ? 'sidebar-active' : '' }}">
+                        @else
+                            <a href="#"
+                                class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('mahasiswa.upload.*') ? 'sidebar-active' : '' }}">
+                    @endif
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0l-4 4m4-4v12" />
+                    </svg>
+                    Upload Proposal
                     </a>
                 @elseif(Auth::user()->isDosen())
                     <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">Menu Dosen</div>

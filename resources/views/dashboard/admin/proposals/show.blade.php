@@ -1,235 +1,169 @@
 @extends('layouts.app-modern')
 
-@section('title', 'Detail Proposal')
+@section('title', 'Detail Proposal PKM')
 
 @section('content')
-    <!-- Page Heading -->
-    <div class="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
+    <div class="flex justify-between items-center mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800">Detail Proposal PKM</h1>
-            <p class="text-slate-500">Tinjau detail proposal dan berikan keputusan verifikasi admin.</p>
+            <h1 class="text-2xl font-bold text-slate-800">Detail Proposal</h1>
+            <p class="text-slate-500 text-sm">Tinjau detail proposal dan berikan keputusan verifikasi admin.</p>
         </div>
         <a href="{{ route('admin.pengajuan_kelompok_pkm.index') }}"
-            class="inline-flex items-center px-4 py-2 bg-white text-slate-700 text-sm font-bold rounded-xl border border-slate-200 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md">
-            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Kembali
+            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors">
+            ← Kembali
         </a>
     </div>
 
-    <!-- Main Grid Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Left Column: Primary Info -->
-        <div class="lg:col-span-2 space-y-8">
-            <!-- Proposal Info Card -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div class="p-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-blue-100 p-2 rounded-lg text-blue-600">
-                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                        </div>
-                        <h6 class="font-bold text-slate-800">Informasi Proposal</h6>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-blue-50 rounded-lg">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h2 class="font-bold text-slate-800">Informasi Proposal</h2>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-900 mb-1">
+                    {{ $proposal->judul_kelompok ?? ($proposal->judul_pkm ?? '') }}</h3>
+                <p class="text-slate-500 mb-6">{{ $proposal->nama_kelompok ?? '-' }}</p>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <p class="text-xs text-slate-500 uppercase font-semibold">Skema PKM</p>
+                        <p class="font-bold text-blue-600">{{ $proposal->skema ?? ($proposal->skema_pkm ?? 'PKM-KC') }}</p>
+                    </div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <p class="text-xs text-slate-500 uppercase font-semibold">Dosen Pembimbing</p>
+                        <p class="font-bold text-slate-700">{{ $proposal->dosenPembimbing->name ?? 'Belum Ditentukan' }}</p>
                     </div>
                 </div>
-                <div class="p-6">
-                    <div class="space-y-6">
-                        <div>
-                            <h3 class="text-2xl font-bold text-slate-800 mb-2">{{ $proposal->judul_kelompok }}</h3>
-                            <p class="text-lg text-slate-600 font-medium">{{ $proposal->nama_kelompok }}</p>
-                        </div>
 
-                        <div class="flex flex-wrap gap-4">
-                            <div class="px-4 py-2 bg-slate-50 rounded-xl border border-slate-100">
-                                <span class="text-xs text-slate-500 uppercase font-bold block mb-1">Skema PKM</span>
-                                <span class="font-bold text-uhamka-600">{{ $proposal->skema }}</span>
-                            </div>
-                            <div class="px-4 py-2 bg-slate-50 rounded-xl border border-slate-100">
-                                <span class="text-xs text-slate-500 uppercase font-bold block mb-1">Dosen Pembimbing</span>
-                                <span class="font-bold text-slate-700">{{ $proposal->dosenPembimbing->name ?? '-' }}</span>
-                            </div>
-                        </div>
-
-                        <div>
-                            <span class="text-xs text-slate-500 uppercase font-bold block mb-2">File Proposal</span>
-                            <a href="{{ Storage::url($proposal->file_proposal) }}" target="_blank"
-                                class="inline-flex items-center px-4 py-2 bg-green-50 text-green-700 font-bold rounded-lg border border-green-200 hover:bg-green-100 transition-colors">
-                                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
-                                Download File
-                            </a>
-                        </div>
-                    </div>
+                <div class="border-t pt-6">
+                    <p class="text-xs text-slate-500 uppercase font-semibold mb-3">File Proposal</p>
+                    @if ($proposal->file_proposal)
+                        <a href="{{ Storage::url($proposal->file_proposal) }}" target="_blank"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-lg font-semibold text-sm border border-green-200 hover:bg-green-100 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            Download File
+                        </a>
+                    @else
+                        <p class="text-sm text-slate-400">Tidak ada file proposal</p>
+                    @endif
                 </div>
             </div>
 
-            <!-- Members Card -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div class="p-6 border-b border-slate-100 bg-slate-50 flex items-center gap-3">
-                    <div class="bg-indigo-100 p-2 rounded-lg text-indigo-600">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-purple-50 rounded-lg">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                            </path>
                         </svg>
                     </div>
-                    <h6 class="font-bold text-slate-800">Anggota Kelompok</h6>
+                    <h2 class="font-bold text-slate-800">Anggota Kelompok</h2>
                 </div>
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Ketua -->
-                        <div
-                            class="flex items-center p-4 bg-gradient-to-br from-indigo-50 to-white rounded-xl border border-indigo-100 shadow-sm relative overflow-hidden group">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @foreach ($proposal->anggota as $mhs)
+                        <div class="flex items-center p-4 border border-slate-100 rounded-xl bg-slate-50/50 relative">
+                            @if ($loop->first)
+                                <span
+                                    class="absolute top-2 right-2 px-2 py-0.5 bg-blue-600 text-[10px] text-white font-bold rounded">KETUA</span>
+                            @endif
                             <div
-                                class="absolute top-0 right-0 bg-indigo-500 text-white text-[10px] uppercase font-bold px-2 py-1 rounded-bl-lg">
-                                Ketua</div>
-                            <div
-                                class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-lg mr-4 group-hover:scale-110 transition-transform">
-                                {{ substr($proposal->ketua->name, 0, 1) }}
+                                class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold mr-4">
+                                {{ substr($mhs->nama ?? $mhs->name, 0, 1) }}
                             </div>
                             <div>
-                                <h6 class="font-bold text-slate-800">{{ $proposal->ketua->name }}</h6>
-                                <p class="text-xs text-slate-500">{{ $proposal->ketua->nim }} •
-                                    {{ $proposal->ketua->program_studi }}</p>
+                                <p class="font-bold text-slate-800 text-sm leading-tight">{{ $mhs->nama ?? $mhs->name }}</p>
+                                <p class="text-xs text-slate-500">{{ $mhs->nim ?? '' }} • {{ $mhs->program_studi ?? '' }}
+                                </p>
                             </div>
                         </div>
-
-                        <!-- Anggota Loop -->
-                        @foreach ($proposal->anggota as $anggota)
-                            @if ($anggota->posisi != 'ketua')
-                                <div
-                                    class="flex items-center p-4 bg-white rounded-xl border border-slate-100 hover:border-slate-300 transition-colors shadow-sm group">
-                                    <div
-                                        class="w-12 h-12 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-lg mr-4 group-hover:bg-uhamka-100 group-hover:text-uhamka-600 transition-colors">
-                                        {{ substr($anggota->nama, 0, 1) }}
-                                    </div>
-                                    <div>
-                                        <h6 class="font-bold text-slate-800">{{ $anggota->nama }}</h6>
-                                        <p class="text-xs text-slate-500">{{ $anggota->nim }} •
-                                            {{ $anggota->program_studi }}</p>
-                                    </div>
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
 
-        <!-- Right Column: Verification & Status -->
-        <div class="lg:col-span-1 space-y-8">
-            <!-- Verification Status Card -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div class="p-6 border-b border-slate-100 bg-slate-50">
-                    <h6 class="font-bold text-slate-800">Status Verifikasi</h6>
-                </div>
-                <div class="p-6 space-y-4">
-                    <!-- Dosen Status -->
-                    <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <span class="text-sm font-bold text-slate-600">Dosen Pembimbing</span>
-                        @if ($proposal->status_dosen == 'disetujui')
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Disetujui</span>
-                        @elseif($proposal->status_dosen == 'ditolak')
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Ditolak</span>
-                        @else
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Menunggu</span>
-                        @endif
+        <div class="space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <h2 class="font-bold text-slate-800 mb-4">Status Verifikasi</h2>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center p-3 border rounded-xl">
+                        <span class="text-sm text-slate-600">Dosen Pembimbing</span>
+                        <span
+                            class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded">{{ $proposal->status_dosen ?? 'menunggu' }}</span>
                     </div>
-
-                    <!-- Kaprodi Status -->
-                    <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <span class="text-sm font-bold text-slate-600">Kaprodi</span>
-                        @if ($proposal->status_kaprodi == 'disetujui')
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Disetujui</span>
-                        @elseif($proposal->status_kaprodi == 'ditolak')
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">Ditolak</span>
-                        @else
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Menunggu</span>
-                        @endif
+                    <div class="flex justify-between items-center p-3 border rounded-xl">
+                        <span class="text-sm text-slate-600">Kaprodi</span>
+                        <span
+                            class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded">{{ $proposal->status_kaprodi ?? 'menunggu' }}</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Admin Review Card -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div class="p-6 border-b border-slate-100 bg-slate-50">
-                    <h6 class="font-bold text-slate-800">Status Review Admin</h6>
-                </div>
-                <div class="p-6 text-center">
-                    @if ($proposal->status_admin == 'menunggu')
-                        <div
-                            class="inline-flex items-center justify-center w-20 h-20 bg-amber-100 rounded-full mb-4 animate-pulse">
-                            <svg class="w-10 h-10 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <h5 class="text-xl font-bold text-slate-800 mb-1">Menunggu Review</h5>
-                        <p class="text-sm text-slate-500">Proposal ini menunggu keputusan admin.</p>
-                    @elseif($proposal->status_admin == 'disetujui')
-                        <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-4">
-                            <svg class="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <h5 class="text-xl font-bold text-slate-800 mb-1">Disetujui</h5>
-                        <p class="text-sm text-slate-500">Proposal telah disetujui oleh admin.</p>
-                    @elseif($proposal->status_admin == 'ditolak')
-                        <div class="inline-flex items-center justify-center w-20 h-20 bg-red-100 rounded-full mb-4">
-                            <svg class="w-10 h-10 text-red-600" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <h5 class="text-xl font-bold text-slate-800 mb-1">Ditolak</h5>
-                        <p class="text-sm text-slate-500">Proposal ditolak oleh admin.</p>
-                    @endif
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <h2 class="font-bold text-slate-800 mb-4">Status Review Admin</h2>
 
-                    @if ($proposal->catatan_admin)
-                        <div class="mt-6 p-4 rounded-xl bg-slate-50 border border-slate-100 text-left">
-                            <strong class="text-slate-800 block mb-1 text-sm">Catatan Admin:</strong>
-                            <p class="text-slate-600 italic text-sm">"{{ $proposal->catatan_admin }}"</p>
+                @if ($proposal->status_admin === 'menunggu')
+                    <div class="text-center py-6">
+                        <div class="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
                         </div>
-                    @endif
+                        <h3 class="font-bold text-slate-800">Menunggu Review</h3>
+                        <p class="text-xs text-slate-500 px-4 mt-1">Proposal ini menunggu keputusan verifikasi admin.</p>
+                    </div>
 
-                    @if ($proposal->status_admin == 'menunggu')
-                        <div class="mt-8 space-y-3">
-                            <button onclick="document.getElementById('approveModal').classList.remove('hidden')"
-                                class="w-full flex justify-center items-center px-4 py-3 bg-green-600 text-white font-bold rounded-xl shadow-md hover:bg-green-700 hover:shadow-lg transition-all transform hover:-translate-y-0.5">
-                                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div class="space-y-3 mt-6">
+                        <form action="{{ route('admin.pengajuan_kelompok_pkm.approve', $proposal->id) }}" method="POST">
+                            @csrf
+                            <button type="submit"
+                                class="w-full py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-100 flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7" />
+                                        d="M5 13l4 4L19 7"></path>
                                 </svg>
                                 Setujui Proposal
                             </button>
-                            <button onclick="document.getElementById('rejectModal').classList.remove('hidden')"
-                                class="w-full flex justify-center items-center px-4 py-3 bg-white text-red-600 font-bold rounded-xl border-2 border-red-100 hover:bg-red-50 hover:border-red-200 transition-all">
-                                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        </form>
+
+                        <form action="{{ route('admin.pengajuan_kelompok_pkm.reject', $proposal->id) }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="catatan_admin"
+                                value="Mohon perbaiki dokumen sesuai panduan terbaru.">
+                            <button type="submit"
+                                class="w-full py-2.5 bg-white border border-red-200 text-red-500 hover:bg-red-50 font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12" />
+                                        d="M6 18L18 6M6 6l12 12"></path>
                                 </svg>
                                 Tolak Proposal
                             </button>
-                        </div>
-                    @endif
-                </div>
+                        </form>
+                    </div>
+                @else
+                    <div
+                        class="p-4 rounded-xl {{ $proposal->status_admin == 'disetujui' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' }} text-center">
+                        <p class="font-bold capitalize">Status: {{ $proposal->status_admin }}</p>
+                        <p class="text-xs mt-1">{{ $proposal->catatan_admin ?? 'Tidak ada catatan' }}</p>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
-
     <!-- Approve Modal -->
     <div id="approveModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title"
         role="dialog" aria-modal="true">
