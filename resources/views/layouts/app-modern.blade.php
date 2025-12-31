@@ -65,6 +65,16 @@
             <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
 
                 @if (Auth::user()->isMahasiswa())
+                    @php
+                        $showRevisionMain = \App\Models\Schedule::whereIn('type', [
+                            \App\Models\Schedule::TYPE_REVISI_1,
+                            \App\Models\Schedule::TYPE_REVISI_2,
+                            \App\Models\Schedule::TYPE_REVISI_3,
+                        ])
+                            ->active()
+                            ->ongoing()
+                            ->exists();
+                    @endphp
                     <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">Menu Mahasiswa
                     </div>
 
@@ -115,6 +125,21 @@
                     </svg>
                     Upload Proposal
                     </a>
+                    @if ($showRevisionMain)
+                        @if (Route::has('mahasiswa.revisi.index'))
+                            <a href="{{ route('mahasiswa.revisi.index') }}"
+                                class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('mahasiswa.revisi.*') ? 'sidebar-active' : '' }}">
+                            @else
+                                <a href="#"
+                                    class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('mahasiswa.revisi.*') ? 'sidebar-active' : '' }}">
+                        @endif
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Revisi Proposal
+                        </a>
+                    @endif
                 @elseif(Auth::user()->isDosen())
                     <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">Menu Dosen</div>
 
@@ -215,13 +240,13 @@
                         </svg>
                         Kelola Jadwal
                     </a>
-                    <a href="#"
-                        class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('admin.users.*') ? 'sidebar-active' : '' }}">
+                    <a href="{{ route('admin.reviewers.index') }}"
+                        class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('admin.reviewers.*') ? 'sidebar-active' : '' }}">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
-                        Manajemen User
+                        Manajemen Reviewer
                     </a>
                     <a href="#"
                         class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('admin.settings.*') ? 'sidebar-active' : '' }}">

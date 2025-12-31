@@ -34,11 +34,11 @@
         </a>
     </li>
 
-    <!-- Nav Item - Manajemen User -->
-    <li class="nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-        <a class="nav-link" href="#">
+    <!-- Nav Item - Manajemen Reviewer -->
+    <li class="nav-item {{ request()->routeIs('admin.reviewers.*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('admin.reviewers.index') }}">
             <i class="fas fa-fw fa-users"></i>
-            <span>Manajemen User</span>
+            <span>Manajemen Reviewer</span>
         </a>
     </li>
 

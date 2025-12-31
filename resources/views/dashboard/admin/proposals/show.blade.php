@@ -113,53 +113,134 @@
             </div>
 
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <h2 class="font-bold text-slate-800 mb-4">Reviewer Penugasan</h2>
+
+                <div class="mb-4">
+                    <p class="text-sm text-slate-600 mb-2">Reviewer yang sudah ditugaskan:</p>
+                    @if ($proposal->reviewers->count() > 0)
+                        <ul class="space-y-2">
+                            @foreach ($proposal->reviewers as $rev)
+                                <li class="flex items-center justify-between p-3 border rounded-lg">
+                                    <div>
+                                        <div class="font-bold">{{ $rev->name }}</div>
+                                        <div class="text-xs text-slate-500">{{ $rev->email }}</div>
+                                    </div>
+                                    <form
+                                        action="{{ route('admin.pengajuan_kelompok_pkm.unassign_reviewer', $proposal->id) }}"
+                                        method="POST">
+                                        @csrf
+                                        <input type="hidden" name="reviewer_id" value="{{ $rev->id }}">
+                                        <button type="submit"
+                                            class="px-3 py-1.5 bg-red-50 text-red-600 rounded">Hapus</button>
+                                    </form>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p class="text-sm text-slate-500">Belum ada reviewer ditugaskan.</p>
+                    @endif
+                </div>
+
+                <form action="{{ route('admin.pengajuan_kelompok_pkm.assign_reviewer', $proposal->id) }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Pilih Reviewer</label>
+                        <select name="reviewer_id" class="w-full rounded-xl border-slate-300 p-2">
+                            <option value="">-- Pilih Reviewer --</option>
+                            @foreach ($availableReviewers as $rev)
+                                <option value="{{ $rev->id }}">{{ $rev->name }} ({{ $rev->email }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit" class="px-4 py-2 bg-uhamka-500 text-white rounded-lg">Tugaskan
+                            Reviewer</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
                 <h2 class="font-bold text-slate-800 mb-4">Status Review Admin</h2>
 
-                @if ($proposal->status_admin === 'menunggu')
-                    <div class="text-center py-6">
-                        <div class="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="font-bold text-slate-800">Menunggu Review</h3>
-                        <p class="text-xs text-slate-500 px-4 mt-1">Proposal ini menunggu keputusan verifikasi admin.</p>
-                    </div>
+                @php
+                    $assignedCount = $proposal->reviewers->count();
+                    $allReviewed =
+                        $assignedCount > 0 &&
+                        $proposal->reviewers->every(function ($r) {
+                            return ($r->pivot->status ?? null) === 'reviewed';
+                        });
+                @endphp
 
-                    <div class="space-y-3 mt-6">
-                        <form action="{{ route('admin.pengajuan_kelompok_pkm.approve', $proposal->id) }}" method="POST">
-                            @csrf
-                            <button type="submit"
-                                class="w-full py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-100 flex items-center justify-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Setujui Proposal
-                            </button>
-                        </form>
-
-                        <form action="{{ route('admin.pengajuan_kelompok_pkm.reject', $proposal->id) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="catatan_admin"
-                                value="Mohon perbaiki dokumen sesuai panduan terbaru.">
-                            <button type="submit"
-                                class="w-full py-2.5 bg-white border border-red-200 text-red-500 hover:bg-red-50 font-bold rounded-xl transition-all flex items-center justify-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                                Tolak Proposal
-                            </button>
-                        </form>
-                    </div>
-                @else
+                @if (in_array($proposal->status_admin, ['disetujui', 'ditolak']))
                     <div
                         class="p-4 rounded-xl {{ $proposal->status_admin == 'disetujui' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' }} text-center">
                         <p class="font-bold capitalize">Status: {{ $proposal->status_admin }}</p>
                         <p class="text-xs mt-1">{{ $proposal->catatan_admin ?? 'Tidak ada catatan' }}</p>
                     </div>
+                @else
+                    @if ($allReviewed)
+                        <div class="text-center py-6">
+                            <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <h3 class="font-bold text-slate-800">Semua Reviewer Selesai</h3>
+                            <p class="text-xs text-slate-500 px-4 mt-1">Semua reviewer telah menyelesaikan review. Anda
+                                dapat mengambil keputusan verifikasi admin.</p>
+                        </div>
+
+                        <div class="space-y-3 mt-6">
+                            <form action="{{ route('admin.pengajuan_kelompok_pkm.approve', $proposal->id) }}"
+                                method="POST">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-green-100 flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    Setujui Proposal
+                                </button>
+                            </form>
+
+                            <form action="{{ route('admin.pengajuan_kelompok_pkm.reject', $proposal->id) }}"
+                                method="POST">
+                                @csrf
+                                <input type="hidden" name="catatan_admin"
+                                    value="Mohon perbaiki dokumen sesuai panduan terbaru.">
+                                <button type="submit"
+                                    class="w-full py-2.5 bg-white border border-red-200 text-red-500 hover:bg-red-50 font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                    Tolak Proposal
+                                </button>
+                            </form>
+                        </div>
+                    @else
+                        <div class="text-center py-6">
+                            <div class="w-12 h-12 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            @if ($assignedCount === 0)
+                                <h3 class="font-bold text-slate-800">Belum Ada Reviewer Ditugaskan</h3>
+                                <p class="text-xs text-slate-500 px-4 mt-1">Silakan tugaskan reviewer terlebih dahulu
+                                    sebelum mengambil keputusan admin.</p>
+                            @else
+                                <h3 class="font-bold text-slate-800">Menunggu Hasil Review</h3>
+                                <p class="text-xs text-slate-500 px-4 mt-1">Belum semua reviewer menyelesaikan review.
+                                    Tombol ACC/Tolak akan muncul setelah semua reviewer selesai.</p>
+                            @endif
+                        </div>
+                    @endif
                 @endif
             </div>
         </div>

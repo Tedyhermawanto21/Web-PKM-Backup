@@ -41,4 +41,10 @@ class Proposal extends Model
     {
         return $this->hasMany(ProposalAnggota::class);
     }
+
+    public function reviewers()
+    {
+        return $this->belongsToMany(User::class, 'proposal_reviewer', 'proposal_id', 'reviewer_id')
+                    ->withPivot(['status', 'score', 'comments', 'created_at', 'updated_at']);
+    }
 }

@@ -107,4 +107,10 @@ class User extends Authenticatable
     {
         return $this->role->name === 'admin';
     }
+
+    public function assignedProposals()
+    {
+        return $this->belongsToMany(Proposal::class, 'proposal_reviewer', 'reviewer_id', 'proposal_id')
+                    ->withPivot(['status', 'score', 'comments', 'created_at', 'updated_at']);
+    }
 }

@@ -66,7 +66,11 @@ class ProposalController extends Controller
             }
         }
 
-        return view('dashboard.admin.proposals.show', compact('proposal'));
+        $availableReviewers = \App\Models\User::whereHas('role', function ($q) {
+            $q->where('name', 'reviewer');
+        })->get();
+
+        return view('dashboard.admin.proposals.show', compact('proposal', 'availableReviewers'));
     }
 
     public function approve(Request $request, Proposal $proposal)
@@ -77,6 +81,22 @@ class ProposalController extends Controller
             'payload' => $request->all(),
             'user_id' => auth()->id() ?? null,
         ]);
+
+        // Ensure proposal has assigned reviewers and all reviewers have completed review
+        $assigned = $proposal->reviewers()->withPivot('status')->get();
+        if ($assigned->isEmpty()) {
+            return redirect()->route('admin.pengajuan_kelompok_pkm.show', $proposal->id)
+                ->with('error', 'Tidak ada reviewer yang ditugaskan. Admin harus menugaskan reviewer terlebih dahulu.');
+        }
+
+        $notReviewed = $assigned->filter(function ($r) {
+            return ($r->pivot->status ?? null) !== 'reviewed';
+        });
+
+        if ($notReviewed->count() > 0) {
+            return redirect()->route('admin.pengajuan_kelompok_pkm.show', $proposal->id)
+                ->with('error', 'Belum semua reviewer menyelesaikan review. Tunggu sampai reviewer menyelesaikan review sebelum menyetujui.');
+        }
 
         try {
             $proposal->update([
@@ -131,5 +151,53 @@ class ProposalController extends Controller
             return redirect()->route('admin.pengajuan_kelompok_pkm.show', $proposal->id)
                 ->with('error', 'Terjadi kesalahan saat menolak proposal. Silakan coba lagi.');
         }
+    }
+
+    public function assignReviewer(Request $request, Proposal $proposal)
+    {
+        $request->validate([
+            'reviewer_id' => 'required|integer|exists:users,id'
+        ]);
+
+        $reviewer = \App\Models\User::find($request->reviewer_id);
+        if (!$reviewer) {
+            return back()->with('error', 'Reviewer tidak ditemukan.');
+        }
+
+        // Ensure role exists and is reviewer
+        if (!$reviewer->role || $reviewer->role->name !== 'reviewer') {
+            return back()->with('error', 'Pengguna yang dipilih bukan reviewer.');
+        }
+
+        // Ensure pivot row exists and set initial status using the ProposalReviewer model
+        \App\Models\ProposalReviewer::updateOrCreate([
+            'proposal_id' => $proposal->id,
+            'reviewer_id' => $reviewer->id,
+        ], [
+            'status' => 'pending',
+            'score' => null,
+            'comments' => null,
+        ]);
+
+        // Update proposal status to indicate it's been assigned to reviewer(s)
+        try {
+            $proposal->update(['status_admin' => 'ditugaskan']);
+        } catch (\Throwable $e) {
+            // don't fail assignment if status update fails; just log
+            \Log::warning('Failed to update proposal status_admin after assigning reviewer: ' . $e->getMessage());
+        }
+
+        return back()->with('success', 'Reviewer berhasil ditugaskan ke proposal.');
+    }
+
+    public function unassignReviewer(Request $request, Proposal $proposal)
+    {
+        $request->validate([
+            'reviewer_id' => 'required|integer|exists:users,id'
+        ]);
+
+        $proposal->reviewers()->detach($request->reviewer_id);
+
+        return back()->with('success', 'Reviewer dihapus dari penugasan.');
     }
 }

@@ -45,6 +45,24 @@ Route::middleware('auth')->group(function () {
                 return view('dashboard.kaprodi', compact('user'));
             case 'admin':
                 return view('dashboard.admin', compact('user'));
+            case 'reviewer':
+                // Provide assigned counts for reviewer dashboard
+                $totalAssigned = \App\Models\ProposalReviewer::where('reviewer_id', $user->id)->count();
+                $reviewed = \App\Models\ProposalReviewer::where('reviewer_id', $user->id)->where('status', 'reviewed')->count();
+                $pending = \App\Models\ProposalReviewer::where('reviewer_id', $user->id)->where('status', 'pending')->count();
+
+                // Also pass a short list of recent assigned proposals for quick access
+                $proposalIds = \App\Models\ProposalReviewer::where('reviewer_id', $user->id)->pluck('proposal_id')->unique();
+                $recentAssigned = collect();
+                if ($proposalIds->count()) {
+                    $recentAssigned = \App\Models\Proposal::whereIn('id', $proposalIds)
+                        ->with(['ketua'])
+                        ->latest()
+                        ->limit(5)
+                        ->get();
+                }
+
+                return view('dashboard.reviewer', compact('user', 'totalAssigned', 'reviewed', 'pending', 'recentAssigned'));
             default:
                 return view('dashboard.index', compact('user'));
         }
@@ -63,6 +81,7 @@ Route::middleware('auth')->group(function () {
         ]);
         Route::resource('kelompoks', App\Http\Controllers\Mahasiswa\KelompokController::class);
         Route::resource('upload', App\Http\Controllers\Mahasiswa\UploadController::class);
+        Route::get('revisi', [App\Http\Controllers\Mahasiswa\RevisionController::class, 'index'])->name('revisi.index');
     });
 
     // Dosen Routes
@@ -99,9 +118,21 @@ Route::middleware('auth')->group(function () {
         Route::get('pengajuan-kelompok-pkm/{proposal}', [App\Http\Controllers\Admin\ProposalController::class, 'show'])->name('pengajuan_kelompok_pkm.show');
         Route::post('pengajuan-kelompok-pkm/{proposal}/approve', [App\Http\Controllers\Admin\ProposalController::class, 'approve'])->name('pengajuan_kelompok_pkm.approve');
         Route::post('pengajuan-kelompok-pkm/{proposal}/reject', [App\Http\Controllers\Admin\ProposalController::class, 'reject'])->name('pengajuan_kelompok_pkm.reject');
+        Route::post('pengajuan-kelompok-pkm/{proposal}/assign-reviewer', [App\Http\Controllers\Admin\ProposalController::class, 'assignReviewer'])->name('pengajuan_kelompok_pkm.assign_reviewer');
+        Route::post('pengajuan-kelompok-pkm/{proposal}/unassign-reviewer', [App\Http\Controllers\Admin\ProposalController::class, 'unassignReviewer'])->name('pengajuan_kelompok_pkm.unassign_reviewer');
         
         // Schedule Management Routes
+        // Reviewer Management (admin creates reviewer accounts)
+        Route::resource('reviewers', App\Http\Controllers\Admin\ReviewerController::class);
+
         Route::resource('schedules', App\Http\Controllers\Admin\ScheduleController::class);
         Route::patch('schedules/{schedule}/toggle-status', [App\Http\Controllers\Admin\ScheduleController::class, 'toggleStatus'])->name('schedules.toggle-status');
+    });
+
+    // Reviewer Routes
+    Route::prefix('reviewer')->name('reviewer.')->group(function () {
+        Route::get('assigned', [App\Http\Controllers\Reviewer\ReviewController::class, 'index'])->name('assigned.index');
+        Route::get('assigned/{proposal}', [App\Http\Controllers\Reviewer\ReviewController::class, 'show'])->name('assigned.show');
+        Route::post('assigned/{proposal}/submit', [App\Http\Controllers\Reviewer\ReviewController::class, 'submit'])->name('assigned.submit');
     });
 });

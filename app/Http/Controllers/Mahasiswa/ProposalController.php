@@ -373,7 +373,7 @@ class ProposalController extends Controller
 
             $proposal->update([
                 'file_proposal' => $filePath,
-                'status_admin' => 'menunggu'
+                'status_admin' => 'menunggu_alokasi'
             ]);
 
             return redirect()->route('mahasiswa.upload.index')

@@ -32,8 +32,14 @@
     </li>
 
     @php
-        use App\Models\Schedule;
-        $showUpload = Schedule::ofType(Schedule::TYPE_UPLOAD_PROPOSAL)->ongoing()->exists();
+        $showUpload = \App\Models\Schedule::ofType(\App\Models\Schedule::TYPE_UPLOAD_PROPOSAL)->ongoing()->exists();
+        $showRevision = \App\Models\Schedule::whereIn('type', [
+            \App\Models\Schedule::TYPE_REVISI_1,
+            \App\Models\Schedule::TYPE_REVISI_2,
+            \App\Models\Schedule::TYPE_REVISI_3,
+        ])
+            ->ongoing()
+            ->exists();
     @endphp
 
     @if ($showUpload)
@@ -41,6 +47,15 @@
             <a class="nav-link" href="{{ route('mahasiswa.upload.index') }}">
                 <i class="fas fa-fw fa-upload"></i>
                 <span>Upload Proposal</span>
+            </a>
+        </li>
+    @endif
+
+    @if ($showRevision)
+        <li class="nav-item {{ request()->routeIs('mahasiswa.revisi.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('mahasiswa.revisi.index') }}">
+                <i class="fas fa-fw fa-edit"></i>
+                <span>Revisi Proposal</span>
             </a>
         </li>
     @endif
