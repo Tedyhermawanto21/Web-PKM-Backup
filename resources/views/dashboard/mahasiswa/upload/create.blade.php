@@ -85,7 +85,7 @@
                     Belum ada proposal yang siap diupload. Proposal harus disetujui oleh Dosen dan
                     Kaprodi terlebih dahulu.
                 </div>
-                <a href="{{ route('mahasiswa.proposals.index') }}" class="btn btn-primary">
+                <a href="{{ route('mahasiswa.pengajuan_kelompok_pkm.index') }}" class="btn btn-primary">
                     <i class="fas fa-eye"></i> Lihat Pengajuan PKM
                 </a>
             @endif

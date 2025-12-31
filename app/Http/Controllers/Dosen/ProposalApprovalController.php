@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dosen;
 
 use App\Http\Controllers\Controller;
 use App\Models\Proposal;
+use App\Models\Kelompok;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +18,72 @@ class ProposalApprovalController extends Controller
             ->latest()
             ->get();
 
-        return view('dashboard.dosen.proposals.index', compact('proposals'));
+        return view('dashboard.dosen.pengajuan-kelompok.index', compact('proposals'));
+    }
+
+    /**
+     * Show kelompok requests where students requested this dosen as pembimbing.
+     */
+    public function kelompokRequests()
+    {
+        $user = Auth::user();
+
+        $kelompoks = Kelompok::with(['ketua', 'anggota'])
+            ->where('dosen_pembimbing_id', $user->id)
+            ->where('status', 'submitted')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('dashboard.dosen.kelompok_requests.index', compact('kelompoks'));
+    }
+
+    /**
+     * Show single kelompok request detail.
+     */
+    public function kelompokShow(Kelompok $kelompok)
+    {
+        if ($kelompok->dosen_pembimbing_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $kelompok->load(['ketua', 'anggota']);
+
+        return view('dashboard.dosen.kelompok_requests.show', compact('kelompok'));
+    }
+
+    /**
+     * Accept a kelompok request (set status to approved).
+     */
+    public function acceptKelompok(Kelompok $kelompok)
+    {
+        if ($kelompok->dosen_pembimbing_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $kelompok->update([
+            'status' => 'approved'
+        ]);
+
+        return redirect()->route('dosen.kelompok_requests.show', $kelompok->id)->with('success', 'Kelompok diterima sebagai pembimbing.');
+    }
+
+    /**
+     * Reject a kelompok request (set status to rejected and clear dosen_pembimbing_id).
+     */
+    public function rejectKelompok(Request $request, Kelompok $kelompok)
+    {
+        if ($kelompok->dosen_pembimbing_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $note = $request->input('note');
+
+        $kelompok->update([
+            'status' => 'rejected',
+            'dosen_pembimbing_id' => null
+        ]);
+
+        return redirect()->route('dosen.kelompok_requests.show', $kelompok->id)->with('success', 'Kelompok ditolak.');
     }
 
     public function show(Proposal $proposal)
@@ -29,7 +95,7 @@ class ProposalApprovalController extends Controller
 
         $proposal->load(['ketua', 'anggota']);
 
-        return view('dashboard.dosen.proposals.show', compact('proposal'));
+        return view('dashboard.dosen.pengajuan-kelompok.show', compact('proposal'));
     }
 
     public function approve(Proposal $proposal)
@@ -48,7 +114,7 @@ class ProposalApprovalController extends Controller
             'catatan_penolakan' => null
         ]);
 
-        return redirect()->route('dosen.proposals.show', $proposal->id)
+        return redirect()->route('dosen.pengajuan_kelompok_pkm.show', $proposal->id)
             ->with('success', 'Proposal berhasil disetujui! Anda sekarang menjadi dosen pembimbing kelompok ini.');
     }
 
@@ -72,7 +138,7 @@ class ProposalApprovalController extends Controller
             'catatan_penolakan' => $validated['catatan_penolakan']
         ]);
 
-        return redirect()->route('dosen.proposals.show', $proposal->id)
+        return redirect()->route('dosen.pengajuan_kelompok_pkm.show', $proposal->id)
             ->with('success', 'Proposal telah ditolak. Mahasiswa dapat mengajukan proposal baru dengan dosen pembimbing yang lain.');
     }
 }

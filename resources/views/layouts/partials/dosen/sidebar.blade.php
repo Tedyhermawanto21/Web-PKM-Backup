@@ -17,10 +17,17 @@
     <hr class="sidebar-divider">
     <div class="sidebar-heading">Menu Dosen</div>
 
-    <li class="nav-item {{ request()->routeIs('dosen.proposals.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('dosen.proposals.index') }}">
+    <li class="nav-item {{ request()->routeIs('dosen.pengajuan_kelompok_pkm.*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('dosen.pengajuan_kelompok_pkm.index') }}">
             <i class="fas fa-fw fa-file-alt"></i>
             <span>Pengajuan Proposal</span>
+        </a>
+    </li>
+
+    <li class="nav-item {{ request()->routeIs('dosen.kelompok_requests.*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('dosen.kelompok_requests.index') }}">
+            <i class="fas fa-fw fa-user-check"></i>
+            <span>Permintaan Pembimbing</span>
         </a>
     </li>
 

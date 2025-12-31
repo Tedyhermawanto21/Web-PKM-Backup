@@ -27,8 +27,8 @@
     </div>
 
     <!-- Nav Item - Verifikasi Proposal -->
-    <li class="nav-item {{ request()->routeIs('kaprodi.proposals.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('kaprodi.proposals.index') }}">
+    <li class="nav-item {{ request()->routeIs('kaprodi.pengajuan_kelompok_pkm.*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('kaprodi.pengajuan_kelompok_pkm.index') }}">
             <i class="fas fa-fw fa-file-alt"></i>
             <span>Verifikasi Proposal</span>
         </a>

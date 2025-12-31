@@ -53,6 +53,38 @@ class UploadController extends Controller
             ->with(['dosenPembimbing'])
             ->get();
 
+        // If the app uses `Kelompok` entries (students may create Kelompok instead of Proposal),
+        // create missing Proposal records for approved Kelompok so upload flow works.
+        $kelompoks = \App\Models\Kelompok::where('ketua_id', Auth::id())
+            ->where('status', 'approved')
+            ->where(function($q){
+                $q->where('status_kaprodi', 'disetujui')
+                  ->orWhere('status_kaprodi', 'disetujui');
+            })->get();
+
+        foreach ($kelompoks as $k) {
+            $existing = Proposal::where('ketua_id', $k->ketua_id)
+                ->where('nama_kelompok', $k->nama_kelompok)
+                ->first();
+
+            if (! $existing) {
+                $created = Proposal::create([
+                    'judul_kelompok' => $k->judul_pkm,
+                    'nama_kelompok' => $k->nama_kelompok,
+                    'skema' => $k->jenis_pkm,
+                    'ketua_id' => $k->ketua_id,
+                    'dosen_pembimbing_id' => $k->dosen_pembimbing_id,
+                    'status' => 'disetujui',
+                    'status_dosen' => 'disetujui',
+                    'status_kaprodi' => 'disetujui'
+                ]);
+
+                // reload relations and add to proposals collection
+                $created->load('dosenPembimbing');
+                $proposals->push($created);
+            }
+        }
+
         return view('dashboard.mahasiswa.upload.create', compact('proposals', 'uploadSchedule'));
     }
 
@@ -116,6 +148,47 @@ class UploadController extends Controller
         }
 
         $proposal = $upload->load(['dosenPembimbing', 'ketua', 'anggota']);
+
+        // If this Proposal has no ProposalAnggota rows (e.g. it was created from a Kelompok),
+        // try to load anggota from the `kelompoks` tables (pivot and free-form) so the view shows members.
+        if ($proposal->anggota->isEmpty()) {
+            $kelompok = \App\Models\Kelompok::with(['anggota'])->where('ketua_id', $proposal->ketua_id)
+                ->where('nama_kelompok', $proposal->nama_kelompok)
+                ->first();
+
+            if ($kelompok) {
+                // Load registered anggota from pivot
+                $pivotRows = \App\Models\KelompokUser::where('kelompok_id', $kelompok->id)->get();
+                $userIds = $pivotRows->pluck('user_id')->filter()->unique()->values()->all();
+                $users = count($userIds) ? \App\Models\User::whereIn('id', $userIds)->get()->keyBy('id') : collect();
+
+                $anggotaRegistered = $pivotRows->map(function ($row) use ($users) {
+                    if ($row->user_id && isset($users[$row->user_id])) {
+                        $u = $users[$row->user_id];
+                        return (object) [
+                            'nama' => $u->name,
+                            'nim' => $u->nim ?? null,
+                            'program_studi' => $u->program_studi ?? null,
+                            'posisi' => $row->posisi ?? 'anggota'
+                        ];
+                    }
+                    return null;
+                })->filter()->values();
+
+                // Load free-form anggota from kelompok_anggota
+                $freeRows = \App\Models\KelompokAnggota::where('kelompok_id', $kelompok->id)->get();
+                $anggotaFree = $freeRows->map(function ($row) {
+                    return (object) [
+                        'nama' => $row->nama,
+                        'nim' => $row->nim,
+                        'program_studi' => $row->program_studi,
+                        'posisi' => $row->posisi ?? 'anggota'
+                    ];
+                });
+
+                $proposal->anggota = $anggotaRegistered->merge($anggotaFree);
+            }
+        }
 
         return view('dashboard.mahasiswa.upload.show', compact('proposal'));
     }

@@ -24,19 +24,26 @@
         </a>
     </li>
 
-    <li class="nav-item {{ request()->routeIs('mahasiswa.proposals.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('mahasiswa.proposals.index') }}">
+    <li class="nav-item {{ request()->routeIs('mahasiswa.pengajuan_kelompok_pkm.*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('mahasiswa.pengajuan_kelompok_pkm.index') }}">
             <i class="fas fa-fw fa-file-alt"></i>
             <span>Pengajuan PKM</span>
         </a>
     </li>
 
-    <li class="nav-item {{ request()->routeIs('mahasiswa.upload.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('mahasiswa.upload.index') }}">
-            <i class="fas fa-fw fa-upload"></i>
-            <span>Upload Proposal</span>
-        </a>
-    </li>
+    @php
+        use App\Models\Schedule;
+        $showUpload = Schedule::ofType(Schedule::TYPE_UPLOAD_PROPOSAL)->ongoing()->exists();
+    @endphp
+
+    @if ($showUpload)
+        <li class="nav-item {{ request()->routeIs('mahasiswa.upload.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('mahasiswa.upload.index') }}">
+                <i class="fas fa-fw fa-upload"></i>
+                <span>Upload Proposal</span>
+            </a>
+        </li>
+    @endif
 
     <li class="nav-item {{ request()->routeIs('mahasiswa.profil.*') ? 'active' : '' }}">
         <a class="nav-link" href="#">

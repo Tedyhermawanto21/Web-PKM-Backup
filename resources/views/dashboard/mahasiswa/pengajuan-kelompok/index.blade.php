@@ -1,12 +1,21 @@
 @extends('layouts.app-modern')
 
-@section('title', 'Pengajuan Proposal')
+@section('title', 'Pengajuan PKM')
 
 @section('content')
     <!-- Page Heading -->
-    <div class="mb-8">
-        <h1 class="text-2xl font-bold text-slate-800">Pengajuan Proposal PKM</h1>
-        <p class="text-slate-500">Daftar proposal mahasiswa yang perlu direview.</p>
+    <div class="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-800">Pengajuan PKM</h1>
+            <p class="text-slate-500">Kelola dan pantau status proposal PKM Anda.</p>
+        </div>
+        <a href="{{ route('mahasiswa.pengajuan_kelompok_pkm.create') }}"
+            class="inline-flex items-center px-4 py-2 bg-uhamka-900 text-white text-sm font-bold rounded-xl hover:bg-uhamka-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Buat Proposal Baru
+        </a>
     </div>
 
     <!-- Alert Messages -->
@@ -31,67 +40,10 @@
         </div>
     @endif
 
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <!-- Menunggu Approval -->
-        <div
-            class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-uhamka-200 transition-all group">
-            <div class="flex items-start justify-between mb-4">
-                <div
-                    class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-500 text-xl group-hover:scale-110 transition-transform">
-                    ⏳
-                </div>
-                <span
-                    class="px-3 py-1 bg-orange-50 text-orange-600 text-xs font-bold rounded-lg uppercase tracking-wider">Menunggu</span>
-            </div>
-            <div class="flex items-baseline gap-2">
-                <span
-                    class="text-4xl font-extrabold text-slate-900">{{ $proposals->where('status', 'menunggu_approval')->count() }}</span>
-                <span class="text-sm font-bold text-slate-400">Proposal</span>
-            </div>
-        </div>
-
-        <!-- Disetujui -->
-        <div
-            class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-green-200 transition-all group">
-            <div class="flex items-start justify-between mb-4">
-                <div
-                    class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-600 text-xl group-hover:scale-110 transition-transform">
-                    ✅
-                </div>
-                <span
-                    class="px-3 py-1 bg-green-50 text-green-600 text-xs font-bold rounded-lg uppercase tracking-wider">Disetujui</span>
-            </div>
-            <div class="flex items-baseline gap-2">
-                <span
-                    class="text-4xl font-extrabold text-slate-900">{{ $proposals->where('status', 'disetujui')->count() }}</span>
-                <span class="text-sm font-bold text-slate-400">Proposal</span>
-            </div>
-        </div>
-
-        <!-- Ditolak -->
-        <div
-            class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-red-200 transition-all group">
-            <div class="flex items-start justify-between mb-4">
-                <div
-                    class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center text-red-500 text-xl group-hover:scale-110 transition-transform">
-                    ❌
-                </div>
-                <span
-                    class="px-3 py-1 bg-red-50 text-red-600 text-xs font-bold rounded-lg uppercase tracking-wider">Ditolak</span>
-            </div>
-            <div class="flex items-baseline gap-2">
-                <span
-                    class="text-4xl font-extrabold text-slate-900">{{ $proposals->where('status', 'ditolak')->count() }}</span>
-                <span class="text-sm font-bold text-slate-400">Proposal</span>
-            </div>
-        </div>
-    </div>
-
     <!-- Proposals Table -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
         <div class="p-6 border-b border-slate-100">
-            <h3 class="font-bold text-lg text-slate-900">Daftar Pengajuan Proposal</h3>
+            <h3 class="font-bold text-lg text-slate-900">Daftar Proposal PKM Saya</h3>
         </div>
 
         @if ($proposals->count() > 0)
@@ -103,10 +55,9 @@
                             <th class="px-6 py-4">Nama Kelompok</th>
                             <th class="px-6 py-4">Judul PKM</th>
                             <th class="px-6 py-4">Skema</th>
-                            <th class="px-6 py-4">Ketua</th>
+                            <th class="px-6 py-4">Dosen Pembimbing</th>
                             <th class="px-6 py-4 text-center">Status Dosen</th>
                             <th class="px-6 py-4 text-center">Status Kaprodi</th>
-                            <th class="px-6 py-4">Tanggal</th>
                             <th class="px-6 py-4 text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -115,21 +66,20 @@
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-6 py-4 font-medium">{{ $index + 1 }}</td>
                                 <td class="px-6 py-4 font-bold text-slate-800">{{ $proposal->nama_kelompok }}</td>
-                                <td class="px-6 py-4 line-clamp-2 max-w-xs">{{ Str::limit($proposal->judul_kelompok, 50) }}
-                                </td>
+                                <td class="px-6 py-4 line-clamp-2 max-w-xs">{{ $proposal->judul_kelompok }}</td>
                                 <td class="px-6 py-4">
                                     <span
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                         {{ $proposal->skema }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                <td class="px-6 py-4">
                                     <div class="flex items-center gap-2">
                                         <div
                                             class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
-                                            {{ substr($proposal->ketua->name, 0, 1) }}
+                                            {{ substr($proposal->dosenPembimbing->name ?? '?', 0, 1) }}
                                         </div>
-                                        <span>{{ $proposal->ketua->name }}</span>
+                                        <span>{{ $proposal->dosenPembimbing->name ?? 'Belum dipilih' }}</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-center">
@@ -156,19 +106,47 @@
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-500">Menunggu</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-slate-500">
-                                    {{ $proposal->created_at->format('d/m/Y') }}</td>
                                 <td class="px-6 py-4 text-center">
-                                    <a href="{{ route('dosen.pengajuan_kelompok_pkm.show', $proposal->id) }}"
-                                        class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-bold rounded-lg text-white bg-uhamka-500 hover:bg-uhamka-600 focus:outline-none transition-all shadow-sm hover:shadow-md">
-                                        <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                        Detail
-                                    </a>
+                                    <div class="flex items-center justify-center gap-2">
+                                        <a href="{{ route('mahasiswa.pengajuan_kelompok_pkm.show', $proposal->id) }}"
+                                            class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
+                                            title="Lihat Detail">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                        </a>
+                                        @if (in_array($proposal->status, ['draft', 'ditolak']))
+                                            <a href="{{ route('mahasiswa.pengajuan_kelompok_pkm.edit', $proposal->id) }}"
+                                                class="p-2 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition-colors"
+                                                title="Edit">
+                                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                </svg>
+                                            </a>
+                                            <form
+                                                action="{{ route('mahasiswa.pengajuan_kelompok_pkm.destroy', $proposal->id) }}"
+                                                method="POST" class="d-inline"
+                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus proposal ini?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                                                    title="Hapus">
+                                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                                        stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
@@ -181,7 +159,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                 </svg>
-                <p>Belum ada pengajuan proposal yang masuk.</p>
+                <p>Belum ada proposal yang diajukan.</p>
+                <a href="{{ route('mahasiswa.pengajuan_kelompok_pkm.create') }}"
+                    class="mt-4 inline-flex items-center px-4 py-2 bg-uhamka-500 text-white text-sm font-bold rounded-xl hover:bg-uhamka-600 transition-all">
+                    Buat Proposal Pertama
+                </a>
             </div>
         @endif
     </div>

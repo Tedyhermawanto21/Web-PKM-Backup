@@ -27,8 +27,8 @@
     </div>
 
     <!-- Nav Item - Review Proposal -->
-    <li class="nav-item {{ request()->routeIs('admin.proposals.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('admin.proposals.index') }}">
+    <li class="nav-item {{ request()->routeIs('admin.pengajuan_kelompok_pkm.*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('admin.pengajuan_kelompok_pkm.index') }}">
             <i class="fas fa-fw fa-file-alt"></i>
             <span>Review Proposal</span>
         </a>
