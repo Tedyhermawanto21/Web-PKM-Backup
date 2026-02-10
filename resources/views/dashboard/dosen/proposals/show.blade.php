@@ -90,6 +90,118 @@
         @endif
     </div>
 
+    <!-- Progress Tracking Card -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 mb-8">
+        <div class="flex items-center justify-between mb-8">
+             <h4 class="text-lg font-bold text-slate-900">Tahapan Proposal</h4>
+             <span class="text-xs font-medium px-3 py-1 bg-slate-100 text-slate-500 rounded-full">Progress Terkini</span>
+        </div>
+        
+        <div class="relative px-4">
+            <!-- Connecting Line -->
+            <div class="absolute left-0 top-1/2 -mt-px w-full h-1 bg-slate-100 rounded-full" aria-hidden="true"></div>
+            
+            <!-- Steps -->
+            <ul class="relative flex justify-between w-full">
+                @php
+                    // Define the Admin Schedule Steps
+                    $steps = [
+                        'pengajuan_kelompok' => ['label' => 'Pengajuan', 'status' => 'upcoming'],
+                        'upload_proposal' => ['label' => 'Upload Proposal', 'status' => 'upcoming'],
+                        'revisi_1' => ['label' => 'Revisi Tahap 1', 'status' => 'upcoming'],
+                        'revisi_2' => ['label' => 'Revisi Tahap 2', 'status' => 'upcoming'],
+                        'revisi_3' => ['label' => 'Revisi Tahap 3', 'status' => 'upcoming'],
+                    ];
+
+                    // Check Active Schedule from Admin (Optional: Highlight active phase?)
+                    // For now, track STUDENT progress through these phases.
+
+                    // 1. Pengajuan Kelompok
+                    // Complete if Dosen and Kaprodi Approved
+                    if ($proposal->status == 'menunggu_approval' || $proposal->status_dosen == 'menunggu' || $proposal->status_dosen == 'ditolak' || $proposal->status_dosen == 'pending') {
+                         $steps['pengajuan_kelompok']['status'] = 'current';
+                         if($proposal->status_dosen == 'ditolak') $steps['pengajuan_kelompok']['status'] = 'rejected';
+                    } elseif ($proposal->status_kaprodi == 'menunggu') {
+                         $steps['pengajuan_kelompok']['status'] = 'current'; // Still in approval phase
+                    } elseif ($proposal->status_kaprodi == 'ditolak') {
+                         $steps['pengajuan_kelompok']['status'] = 'rejected';
+                    } else {
+                         // Approved by both
+                         $steps['pengajuan_kelompok']['status'] = 'complete';
+
+                         // 2. Upload Proposal
+                         if (!$proposal->file_proposal) {
+                             $steps['upload_proposal']['status'] = 'current';
+                         } else {
+                             $steps['upload_proposal']['status'] = 'complete';
+
+                             // 3. Revisi Stages
+                             // Logic: Check revision_stage and status_admin
+                             // If status_admin is 'disetujui', they are DONE (Green). All remaining stages 'complete' or skipped?
+                             // If status_admin is 'pending', they are waiting for review (Show between Upload and Revisi 1?)
+                             
+                             if ($proposal->status_admin == 'disetujui') {
+                                 // Mark all as complete? Or just show up to where they got approved?
+                                 // Let's mark Revisi 1 as complete (passed)
+                                 $steps['revisi_1']['status'] = 'complete';
+                                 $steps['revisi_2']['status'] = 'complete';
+                                 $steps['revisi_3']['status'] = 'complete';
+                             } elseif ($proposal->status_admin == 'pending') {
+                                 // Waiting for review, theoretically 'current' could be Revisi 1 (waiting for feedback)
+                                 // Or create a visual "Waiting" state on Upload?
+                                 // Let's mark Upload as Complete and Revisi 1 as "Waiting" (Upcoming)
+                                 // OR mark Revisi 1 as Current?
+                                 $steps['revisi_1']['status'] = 'current'; // Waiting for result of Phase 1
+                             } elseif ($proposal->status_admin == 'revisi') {
+                                 $stage = $proposal->revision_stage ?? 1;
+                                 if ($stage == 1) {
+                                     $steps['revisi_1']['status'] = 'current';
+                                 } elseif ($stage == 2) {
+                                     $steps['revisi_1']['status'] = 'complete';
+                                     $steps['revisi_2']['status'] = 'current';
+                                 } elseif ($stage >= 3) {
+                                     $steps['revisi_1']['status'] = 'complete';
+                                     $steps['revisi_2']['status'] = 'complete';
+                                     $steps['revisi_3']['status'] = 'current';
+                                 }
+                             }
+                         }
+                    }
+                @endphp
+
+                @foreach ($steps as $key => $step)
+                    <li class="relative flex flex-col items-center group flex-1">
+                        @if ($step['status'] == 'complete')
+                            <div class="h-10 w-10 rounded-full bg-uhamka-600 flex items-center justify-center ring-4 ring-white z-10 shadow-sm transition-all duration-300 transform group-hover:scale-110">
+                                <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <span class="mt-4 text-xs font-bold text-uhamka-700 text-center uppercase tracking-wide">{{ $step['label'] }}</span>
+                        @elseif($step['status'] == 'current')
+                            <div class="h-10 w-10 rounded-full bg-white border-2 border-uhamka-600 flex items-center justify-center ring-4 ring-white z-10 shadow-md animate-pulse">
+                                <div class="h-3 w-3 rounded-full bg-uhamka-600"></div>
+                            </div>
+                            <span class="mt-4 text-xs font-bold text-uhamka-700 text-center uppercase tracking-wide">{{ $step['label'] }}</span>
+                        @elseif($step['status'] == 'rejected')
+                            <div class="h-10 w-10 rounded-full bg-red-600 flex items-center justify-center ring-4 ring-white z-10 shadow-sm">
+                                <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </div>
+                            <span class="mt-4 text-xs font-bold text-red-700 text-center uppercase tracking-wide">{{ $step['label'] }} (Ditolak)</span>
+                        @else
+                            <div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center ring-4 ring-white z-10">
+                                <span class="text-sm font-bold text-slate-400">{{ $loop->iteration }}</span>
+                            </div>
+                            <span class="mt-4 text-xs font-medium text-slate-400 text-center uppercase tracking-wide">{{ $step['label'] }}</span>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <!-- Informasi Kelompok -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden h-full">
@@ -149,14 +261,55 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
-                    Anggota Kelompok <span
-                        class="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-xs">{{ $proposal->anggota->count() }}
+                    Anggota Kelompok
+                    @php
+                        $anggota = $proposal->anggota;
+                        
+                        // Fallback: If ProposalAnggota is empty, try to get from Kelompok via Ketua
+                        if ($anggota->count() == 0) {
+                             $kelompok = \App\Models\Kelompok::where('ketua_id', $proposal->ketua_id)->latest()->first();
+                             if ($kelompok) {
+                                 // Manual merge similar to Mahasiswa Controller
+                                 // 1. Registered Users
+                                 $pivotRows = \App\Models\KelompokUser::where('kelompok_id', $kelompok->id)->get();
+                                 $userIds = $pivotRows->pluck('user_id')->filter()->unique()->values()->all();
+                                 $users = count($userIds) ? \App\Models\User::whereIn('id', $userIds)->get()->keyBy('id') : collect();
+
+                                 $anggotaRegistered = $pivotRows->map(function ($row) use ($users) {
+                                     if ($row->user_id && isset($users[$row->user_id])) {
+                                         $u = $users[$row->user_id];
+                                         return (object) [
+                                             'nama' => $u->name,
+                                             'nim' => $u->nim ?? '-',
+                                             'program_studi' => $u->program_studi ?? '-',
+                                             'posisi' => $row->posisi ?? 'anggota'
+                                         ];
+                                     }
+                                     return null;
+                                 })->filter()->values();
+
+                                 // 2. Free Users
+                                 $freeRows = \App\Models\KelompokAnggota::where('kelompok_id', $kelompok->id)->get();
+                                 $anggotaFree = $freeRows->map(function ($row) {
+                                     return (object) [
+                                         'nama' => $row->nama,
+                                         'nim' => $row->nim ?? '-',
+                                         'program_studi' => $row->program_studi ?? '-',
+                                         'posisi' => $row->posisi ?? 'anggota'
+                                     ];
+                                 });
+                                 
+                                 $anggota = $anggotaRegistered->merge($anggotaFree);
+                             }
+                        }
+                    @endphp
+                    <span class="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-xs">{{ $anggota->count() }}
                         Orang</span>
                 </h6>
             </div>
             <div class="p-6">
                 <div class="space-y-4">
-                    @foreach ($proposal->anggota as $index => $anggota)
+                    @foreach ($anggota as $index => $member)
                         <div
                             class="flex items-center p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
                             <div
@@ -165,19 +318,23 @@
                             </div>
                             <div>
                                 <div class="flex items-center gap-2 mb-1">
-                                    @if ($anggota->posisi == 'ketua')
+                                    @if (isset($member->posisi) && $member->posisi == 'ketua')
                                         <span
                                             class="px-2 py-0.5 bg-uhamka-100 text-uhamka-700 text-[10px] font-bold uppercase rounded-md">Ketua</span>
                                     @else
                                         <span
                                             class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold uppercase rounded-md">Anggota</span>
                                     @endif
-                                    <h6 class="font-bold text-slate-900">{{ $anggota->nama }}</h6>
+                                    <h6 class="font-bold text-slate-900">{{ $member->nama }}</h6>
                                 </div>
-                                <p class="text-xs text-slate-500">{{ $anggota->nim }} • {{ $anggota->program_studi }}</p>
+                                <p class="text-xs text-slate-500">{{ $member->nim }} • {{ $member->program_studi }}</p>
                             </div>
                         </div>
                     @endforeach
+                    
+                    @if($anggota->count() == 0)
+                         <p class="text-slate-500 italic text-center py-4">Tidak ada data anggota.</p>
+                    @endif
                 </div>
             </div>
         </div>

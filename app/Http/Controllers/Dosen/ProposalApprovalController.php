@@ -18,7 +18,7 @@ class ProposalApprovalController extends Controller
             ->latest()
             ->get();
 
-        return view('dashboard.dosen.pengajuan-kelompok.index', compact('proposals'));
+        return view('dashboard.dosen.proposals.index', compact('proposals'));
     }
 
     /**
@@ -64,7 +64,7 @@ class ProposalApprovalController extends Controller
             'status' => 'approved'
         ]);
 
-        return redirect()->route('dosen.kelompok_requests.show', $kelompok->id)->with('success', 'Kelompok diterima sebagai pembimbing.');
+        return redirect()->route('dosen.bimbingan_mahasiswa.index')->with('success', 'Kelompok berhasil diterima! Sekarang Anda dapat membimbing kelompok tersebut.');
     }
 
     /**
@@ -95,7 +95,7 @@ class ProposalApprovalController extends Controller
 
         $proposal->load(['ketua', 'anggota']);
 
-        return view('dashboard.dosen.pengajuan-kelompok.show', compact('proposal'));
+        return view('dashboard.dosen.proposals.show', compact('proposal'));
     }
 
     public function approve(Proposal $proposal)
@@ -140,5 +140,38 @@ class ProposalApprovalController extends Controller
 
         return redirect()->route('dosen.pengajuan_kelompok_pkm.show', $proposal->id)
             ->with('success', 'Proposal telah ditolak. Mahasiswa dapat mengajukan proposal baru dengan dosen pembimbing yang lain.');
+    }
+
+    /**
+     * Show all kelompoks that this dosen is mentoring (approved to be their pembimbing).
+     */
+    public function bimbinganMahasiswa()
+    {
+        $user = Auth::user();
+
+        // Get all kelompoks where this dosen is the pembimbing and status is approved
+        $kelompoks = Kelompok::with(['ketua', 'anggota'])
+            ->where('dosen_pembimbing_id', $user->id)
+            ->where('status', 'approved')
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        return view('dashboard.dosen.bimbingan_mahasiswa.index', compact('kelompoks'));
+    }
+
+    /**
+     * Show detail of a kelompok that this dosen is mentoring.
+     */
+    public function showBimbingan(Kelompok $kelompok)
+    {
+        // Ensure this dosen is the pembimbing
+        if ($kelompok->dosen_pembimbing_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $kelompok->load(['ketua', 'anggota', 'kelompokAnggota', 'dosenPembimbing']);
+        $allAnggota = $kelompok->getAllAnggota();
+
+        return view('dashboard.dosen.bimbingan_mahasiswa.show', compact('kelompok', 'allAnggota'));
     }
 }

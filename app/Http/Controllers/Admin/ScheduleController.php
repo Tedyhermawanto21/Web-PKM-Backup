@@ -24,7 +24,7 @@ class ScheduleController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'type' => 'required|in:upload_proposal,revisi_1,revisi_2,revisi_3',
+            'type' => 'required|in:pengajuan_kelompok,upload_proposal,revisi_1,revisi_2,revisi_3',
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
@@ -47,7 +47,7 @@ class ScheduleController extends Controller
     public function update(Request $request, Schedule $schedule)
     {
         $validated = $request->validate([
-            'type' => 'required|in:upload_proposal,revisi_1,revisi_2,revisi_3',
+            'type' => 'required|in:pengajuan_kelompok,upload_proposal,revisi_1,revisi_2,revisi_3',
             'name' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',

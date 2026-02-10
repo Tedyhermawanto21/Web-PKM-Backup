@@ -23,12 +23,10 @@ class Schedule extends Model
     ];
 
     // Method untuk cek apakah jadwal sedang berlangsung
+    // Jika jadwal aktif (is_active=true), maka dianggap ongoing
     public function isOngoing()
     {
-        $now = Carbon::now();
-        return $this->is_active && 
-               $now->greaterThanOrEqualTo($this->start_date) && 
-               $now->lessThanOrEqualTo($this->end_date);
+        return $this->is_active;
     }
 
     // Method untuk cek apakah jadwal sudah lewat
@@ -56,15 +54,15 @@ class Schedule extends Model
     }
 
     // Scope untuk jadwal yang sedang berlangsung
+    // Jika jadwal aktif (is_active=true), maka dianggap ongoing meskipun tanggalnya sudah lewat
+    // Ini memberikan fleksibilitas kepada admin untuk membuka jadwal kapan saja
     public function scopeOngoing($query)
     {
-        $now = Carbon::now();
-        return $query->where('is_active', true)
-                    ->where('start_date', '<=', $now)
-                    ->where('end_date', '>=', $now);
+        return $query->where('is_active', true);
     }
 
     // Konstanta untuk tipe jadwal
+    const TYPE_PENGAJUAN_KELOMPOK = 'pengajuan_kelompok';
     const TYPE_UPLOAD_PROPOSAL = 'upload_proposal';
     const TYPE_REVISI_1 = 'revisi_1';
     const TYPE_REVISI_2 = 'revisi_2';
@@ -73,6 +71,7 @@ class Schedule extends Model
     public static function getTypes()
     {
         return [
+            self::TYPE_PENGAJUAN_KELOMPOK => 'Pengajuan Kelompok PKM',
             self::TYPE_UPLOAD_PROPOSAL => 'Upload Proposal',
             self::TYPE_REVISI_1 => 'Revisi Tahap 1',
             self::TYPE_REVISI_2 => 'Revisi Tahap 2',

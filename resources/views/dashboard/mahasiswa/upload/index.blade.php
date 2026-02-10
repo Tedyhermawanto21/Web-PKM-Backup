@@ -206,7 +206,7 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    @if ($proposal->status_admin == 'menunggu')
+                                    @if ($proposal->status_admin == 'pending')
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700 animate-pulse">Menunggu
                                             Review</span>

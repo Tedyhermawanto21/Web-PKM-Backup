@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('proposals', function (Blueprint $table) {
-            //
+            $table->string('file_proposal')->nullable()->after('catatan_penolakan');
+            $table->enum('status_admin', ['pending', 'disetujui', 'ditolak', 'revisi'])->default('pending')->after('file_proposal');
+            $table->text('catatan_admin')->nullable()->after('status_admin');
         });
     }
 
@@ -22,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('proposals', function (Blueprint $table) {
-            //
+            $table->dropColumn(['file_proposal', 'status_admin', 'catatan_admin']);
         });
     }
 };

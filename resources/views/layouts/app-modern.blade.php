@@ -167,8 +167,8 @@
                         </svg>
                         Permintaan Pembimbing
                     </a>
-                    <a href="#"
-                        class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('dosen.bimbingan.*') ? 'sidebar-active' : '' }}">
+                    <a href="{{ route('dosen.bimbingan_mahasiswa.index') }}"
+                        class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('dosen.bimbingan_mahasiswa.*') ? 'sidebar-active' : '' }}">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -186,14 +186,7 @@
                         </svg>
                         Dashboard
                     </a>
-                    <a href="{{ route('kaprodi.pengajuan_kelompok_pkm.index') }}"
-                        class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('kaprodi.pengajuan_kelompok_pkm.*') ? 'sidebar-active' : '' }}">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Verifikasi Proposal
-                    </a>
+
                     <a href="{{ route('kaprodi.kelompok_requests.index') }}"
                         class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('kaprodi.kelompok_requests.*') ? 'sidebar-active' : '' }}">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -202,14 +195,15 @@
                         </svg>
                         Verifikasi Kelompok
                     </a>
-                    <a href="#"
-                        class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('kaprodi.reports.*') ? 'sidebar-active' : '' }}">
+                    <a href="{{ route('kaprodi.daftar_mahasiswa.index') }}"
+                        class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('kaprodi.daftar_mahasiswa.*') ? 'sidebar-active' : '' }}">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
-                        Laporan & Statistik
+                        Daftar Mahasiswa
                     </a>
+
                 @elseif(Auth::user()->isAdmin())
                     <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">Menu Administrator
                     </div>

@@ -27,7 +27,7 @@
     <li class="nav-item {{ request()->routeIs('mahasiswa.pengajuan_kelompok_pkm.*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('mahasiswa.pengajuan_kelompok_pkm.index') }}">
             <i class="fas fa-fw fa-file-alt"></i>
-            <span>Pengajuan PKM</span>
+            <span>Pengajuan Kelompok</span>
         </a>
     </li>
 

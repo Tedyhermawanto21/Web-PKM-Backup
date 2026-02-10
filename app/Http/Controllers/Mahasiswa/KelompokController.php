@@ -13,24 +13,32 @@ class KelompokController extends Controller
     {
         $user = Auth::user();
 
-        // Load kelompoks where user is member or ketua
-        $kelompoks = $user->kelompoks()->with(['dosenPembimbing'])->get()
-            ->merge($user->kelompokAsKetua()->with(['dosenPembimbing'])->get())
+        // Load kelompoks where user is member or ketua AND approved by kaprodi
+        $kelompoksAsMember = $user->kelompoks()
+            ->with(['dosenPembimbing'])
+            ->where('status', 'approved')
+            ->where('status_kaprodi', 'disetujui')
+            ->get();
+            
+        $kelompoksAsKetua = $user->kelompokAsKetua()
+            ->with(['dosenPembimbing'])
+            ->where('status', 'approved') 
+            ->where('status_kaprodi', 'disetujui')
+            ->get();
+
+        $kelompoks = $kelompoksAsMember->merge($kelompoksAsKetua)
             ->unique('id')
             ->values();
-
-        // If user has at least one kelompok, redirect to its detail page
-        if ($kelompoks->count() > 0) {
-            return redirect()->route('mahasiswa.kelompoks.show', $kelompoks->first()->id);
-        }
 
         return view('dashboard.mahasiswa.kelompoks.index', compact('kelompoks'));
     }
 
-    public function show($id)
+    public function show(Kelompok $kelompok)
     {
         $user = Auth::user();
-        $kelompok = Kelompok::with(['dosenPembimbing'])->findOrFail($id);
+        
+        // Load relationships
+        $kelompok->load(['dosenPembimbing', 'anggota', 'ketua']);
 
         // authorize: must be ketua or anggota
         $isMember = $kelompok->ketua_id === $user->id || $kelompok->anggota()->where('user_id', $user->id)->exists();

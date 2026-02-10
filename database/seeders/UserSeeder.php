@@ -17,6 +17,12 @@ class UserSeeder extends Seeder
         $users = [
             // Admin
             ['name' => 'Admin PKM', 'nim' => null, 'email' => 'admin@pkm.ac.id', 'password' => Hash::make('admin123'), 'program_studi' => null, 'no_hp' => '081234567890', 'jenis_kelamin' => 'L', 'nidn' => null, 'role_id' => 5, 'created_at' => now(), 'updated_at' => now()],
+
+            // Default Test Accounts
+            ['name' => 'Mahasiswa Test', 'nim' => '2025001', 'email' => 'mahasiswa@uhamka.ac.id', 'password' => Hash::make('uhamka123'), 'program_studi' => 'Teknik Informatika', 'no_hp' => '081234567880', 'jenis_kelamin' => 'L', 'nidn' => null, 'role_id' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Dosen Test', 'nim' => null, 'email' => 'dosen@uhamka.ac.id', 'password' => Hash::make('uhamka123'), 'program_studi' => 'Teknik Informatika', 'no_hp' => '081234567881', 'jenis_kelamin' => 'L', 'nidn' => '0425010001', 'role_id' => 2, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Kaprodi Test', 'nim' => null, 'email' => 'kaprodi@uhamka.ac.id', 'password' => Hash::make('uhamka123'), 'program_studi' => 'Teknik Informatika', 'no_hp' => '081234567882', 'jenis_kelamin' => 'L', 'nidn' => '0425010002', 'role_id' => 3, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Admin Test', 'nim' => null, 'email' => 'admin@uhamka.ac.id', 'password' => Hash::make('uhamka123'), 'program_studi' => null, 'no_hp' => '081234567883', 'jenis_kelamin' => 'L', 'nidn' => null, 'role_id' => 5, 'created_at' => now(), 'updated_at' => now()],
             
             // Kaprodi
             ['name' => 'Dr. Siti Nurhaliza, M.T', 'nim' => null, 'email' => 'kaprodi.ti@ft.ac.id', 'password' => Hash::make('kaprodi123'), 'program_studi' => 'Teknik Informatika', 'no_hp' => '081234567892', 'jenis_kelamin' => 'P', 'nidn' => '0402078902', 'role_id' => 3, 'created_at' => now(), 'updated_at' => now()],

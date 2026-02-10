@@ -1,22 +1,85 @@
 @extends('layouts.app-modern')
 
-@section('title', 'Pengajuan PKM')
+@section('title', 'Pengajuan Kelompok')
 
 @section('content')
     <!-- Page Heading -->
     <div class="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800">Pengajuan PKM</h1>
+            <h1 class="text-2xl font-bold text-slate-800">Pengajuan Kelompok PKM</h1>
             <p class="text-slate-500">Kelola dan pantau status proposal PKM Anda.</p>
         </div>
-        <a href="{{ route('mahasiswa.pengajuan_kelompok_pkm.create') }}"
-            class="inline-flex items-center px-4 py-2 bg-uhamka-900 text-white text-sm font-bold rounded-xl hover:bg-uhamka-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-            </svg>
-            Buat Proposal Baru
-        </a>
+        @if ($submissionSchedule)
+            <a href="{{ route('mahasiswa.pengajuan_kelompok_pkm.create') }}"
+                class="inline-flex items-center px-4 py-2 bg-uhamka-900 text-white text-sm font-bold rounded-xl hover:bg-uhamka-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Buat Proposal Baru
+            </a>
+        @else
+            <button
+                class="inline-flex items-center px-4 py-2 bg-slate-200 text-slate-400 text-sm font-bold rounded-xl cursor-not-allowed"
+                disabled title="Jadwal pengajuan belum dibuka">
+                <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                Pengajuan Ditutup
+            </button>
+        @endif
     </div>
+
+    <!-- Schedule Information -->
+    @if ($submissionSchedule)
+        <div
+            class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 flex items-start gap-4 animate-fade-in-down shadow-sm">
+            <div class="p-2 bg-green-100 rounded-lg text-green-600 flex-shrink-0">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </div>
+            <div>
+                <h4 class="font-bold text-green-800 mb-1">Jadwal Pengajuan Dibuka!</h4>
+                <p class="text-sm text-green-700 mb-2">Periode pengajuan kelompok PKM saat ini sedang berlangsung.</p>
+                <div
+                    class="flex items-center gap-2 text-sm font-mono text-green-800 bg-green-100 px-3 py-1 rounded-lg inline-flex">
+                    <span>{{ $submissionSchedule->start_date->format('d M Y H:i') }}</span>
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                    <span>{{ $submissionSchedule->end_date->format('d M Y H:i') }}</span>
+                </div>
+                @if ($submissionSchedule->description)
+                    <p class="text-xs text-green-600 mt-2 italic border-t border-green-200 pt-2">
+                        {{ $submissionSchedule->description }}</p>
+                @endif
+            </div>
+            <button type="button" class="ml-auto text-green-400 hover:text-green-600"
+                onclick="this.parentElement.remove()">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    @else
+        <div
+            class="mb-6 p-4 rounded-xl bg-yellow-50 border border-yellow-200 flex items-start gap-4 animate-fade-in-down shadow-sm">
+            <div class="p-2 bg-yellow-100 rounded-lg text-yellow-600 flex-shrink-0">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <div>
+                <h4 class="font-bold text-yellow-800 mb-1">Jadwal Pengajuan Belum Dibuka</h4>
+                <p class="text-sm text-yellow-700">Mohon tunggu pengumuman dari admin untuk jadwal pengajuan kelompok PKM
+                    berikutnya.</p>
+            </div>
+        </div>
+    @endif
 
     <!-- Alert Messages -->
     @if (session('success'))
@@ -111,7 +174,8 @@
                                         <a href="{{ route('mahasiswa.pengajuan_kelompok_pkm.show', $proposal->id) }}"
                                             class="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
                                             title="Lihat Detail">
-                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

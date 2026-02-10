@@ -96,6 +96,10 @@ Route::middleware('auth')->group(function () {
         Route::get('kelompok-requests/{kelompok}', [App\Http\Controllers\Dosen\ProposalApprovalController::class, 'kelompokShow'])->name('kelompok_requests.show');
         Route::post('kelompok-requests/{kelompok}/accept', [App\Http\Controllers\Dosen\ProposalApprovalController::class, 'acceptKelompok'])->name('kelompok_requests.accept');
         Route::post('kelompok-requests/{kelompok}/reject', [App\Http\Controllers\Dosen\ProposalApprovalController::class, 'rejectKelompok'])->name('kelompok_requests.reject');
+        
+        // Bimbingan Mahasiswa
+        Route::get('bimbingan-mahasiswa', [App\Http\Controllers\Dosen\ProposalApprovalController::class, 'bimbinganMahasiswa'])->name('bimbingan_mahasiswa.index');
+        Route::get('bimbingan-mahasiswa/{kelompok}', [App\Http\Controllers\Dosen\ProposalApprovalController::class, 'showBimbingan'])->name('bimbingan_mahasiswa.show');
     });
 
     // Kaprodi Routes
@@ -110,6 +114,10 @@ Route::middleware('auth')->group(function () {
         Route::get('kelompok-requests/{kelompok}', [App\Http\Controllers\Kaprodi\ProposalController::class, 'kelompokShow'])->name('kelompok_requests.show');
         Route::post('kelompok-requests/{kelompok}/accept', [App\Http\Controllers\Kaprodi\ProposalController::class, 'acceptKelompok'])->name('kelompok_requests.accept');
         Route::post('kelompok-requests/{kelompok}/reject', [App\Http\Controllers\Kaprodi\ProposalController::class, 'rejectKelompok'])->name('kelompok_requests.reject');
+        
+        // Daftar Mahasiswa
+        Route::get('daftar-mahasiswa', [App\Http\Controllers\Kaprodi\ProposalController::class, 'daftarMahasiswa'])->name('daftar_mahasiswa.index');
+        Route::get('daftar-mahasiswa/{kelompok}', [App\Http\Controllers\Kaprodi\ProposalController::class, 'daftarMahasiswaShow'])->name('daftar_mahasiswa.show');
     });
 
     // Admin Routes

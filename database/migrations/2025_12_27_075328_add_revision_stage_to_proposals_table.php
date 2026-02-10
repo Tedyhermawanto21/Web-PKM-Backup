@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('proposals', function (Blueprint $table) {
-            $table->integer('revision_stage')->default(0)->after('status_admin'); // 0: tidak revisi, 1-3: tahap revisi
-            $table->text('revision_notes')->nullable()->after('revision_stage'); // Catatan revisi dari admin
+            $table->integer('revision_stage')->default(0); // 0: tidak revisi, 1-3: tahap revisi
+            $table->text('revision_notes')->nullable(); // Catatan revisi dari admin
         });
     }
 

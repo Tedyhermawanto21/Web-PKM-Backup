@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Kelompok;
 use App\Models\KelompokUser;
 use App\Models\KelompokAnggota;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,13 @@ class ProposalController extends Controller
     public function index()
     {
         $user = Auth::user();
+        
+        // Check if submission schedule is active
+        $submissionSchedule = Schedule::ofType(Schedule::TYPE_PENGAJUAN_KELOMPOK)
+            ->active()
+            ->ongoing()
+            ->first();
+        
         // Load Kelompok entries for the user and adapt fields so the existing
         // proposals index view can render them without changes.
         $kelompoks = Kelompok::where('ketua_id', $user->id)
@@ -53,21 +61,42 @@ class ProposalController extends Controller
             return $k;
         });
 
-        return view('dashboard.mahasiswa.pengajuan-kelompok.index', compact('proposals'));
+        return view('dashboard.mahasiswa.pengajuan-kelompok.index', compact('proposals', 'submissionSchedule'));
     }
 
     public function create()
     {
+        // Check if submission schedule is active
+        $submissionSchedule = Schedule::ofType(Schedule::TYPE_PENGAJUAN_KELOMPOK)
+            ->active()
+            ->ongoing()
+            ->first();
+
+        if (!$submissionSchedule) {
+            return redirect()->route('mahasiswa.pengajuan_kelompok_pkm.index')
+                ->with('error', 'Jadwal pengajuan kelompok PKM belum dibuka atau sudah ditutup.');
+        }
+        
         // Get all dosen (lecturers) for selection
         $dosens = User::whereHas('role', function($query) {
             $query->where('name', 'dosen');
         })->get();
 
-        return view('dashboard.mahasiswa.pengajuan-kelompok.create', compact('dosens'));
+        return view('dashboard.mahasiswa.pengajuan-kelompok.create', compact('dosens', 'submissionSchedule'));
     }
 
     public function store(Request $request)
     {
+        // Check if submission schedule is active
+        $submissionSchedule = Schedule::ofType(Schedule::TYPE_PENGAJUAN_KELOMPOK)
+            ->active()
+            ->ongoing()
+            ->first();
+
+        if (!$submissionSchedule) {
+            return redirect()->route('mahasiswa.pengajuan_kelompok_pkm.index')
+                ->with('error', 'Jadwal pengajuan kelompok PKM belum dibuka atau sudah ditutup.');
+        }
         $validated = $request->validate([
             'judul_kelompok' => 'required|string|max:255',
             'nama_kelompok' => 'required|string|max:255',

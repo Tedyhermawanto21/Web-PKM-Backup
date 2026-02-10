@@ -102,7 +102,7 @@ class UploadController extends Controller
 
         $request->validate([
             'proposal_id' => 'required|exists:proposals,id',
-            'file_proposal' => 'required|file|mimes:pdf,doc,docx|max:5120'
+            'file_proposal' => 'required|file|mimes:pdf,doc,docx|max:20480'
         ]);
 
         $proposal = Proposal::findOrFail($request->proposal_id);
@@ -130,7 +130,7 @@ class UploadController extends Controller
 
             $proposal->update([
                 'file_proposal' => $filePath,
-                'status_admin' => 'menunggu'
+                'status_admin' => 'pending'
             ]);
 
             return redirect()->route('mahasiswa.upload.index')
@@ -253,7 +253,7 @@ class UploadController extends Controller
         }
 
         $request->validate([
-            'file_proposal' => 'required|file|mimes:pdf,doc,docx|max:5120'
+            'file_proposal' => 'required|file|mimes:pdf,doc,docx|max:20480'
         ]);
 
         // Handle file upload
@@ -269,7 +269,7 @@ class UploadController extends Controller
 
             $upload->update([
                 'file_proposal' => $filePath,
-                'status_admin' => 'menunggu',
+                'status_admin' => 'pending',
                 'catatan_admin' => null
             ]);
 

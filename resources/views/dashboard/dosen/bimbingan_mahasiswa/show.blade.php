@@ -1,15 +1,15 @@
 @extends('layouts.app-modern')
 
-@section('title', 'Detail Verifikasi Kelompok')
+@section('title', 'Detail Kelompok Bimbingan')
 
 @section('content')
     <!-- Page Heading -->
     <div class="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800">Detail Verifikasi Kelompok</h1>
-            <p class="text-slate-500">Informasi lengkap kelompok untuk verifikasi Kaprodi.</p>
+            <h1 class="text-2xl font-bold text-slate-800">Detail Kelompok Bimbingan</h1>
+            <p class="text-slate-500">Informasi lengkap kelompok yang Anda bimbing.</p>
         </div>
-        <a href="{{ route('kaprodi.kelompok_requests.index') }}"
+        <a href="{{ route('dosen.bimbingan_mahasiswa.index') }}"
             class="inline-flex items-center px-4 py-2 bg-white text-slate-700 text-sm font-bold rounded-xl border border-slate-200 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md">
             <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -18,27 +18,11 @@
         </a>
     </div>
 
-    <!-- Alert Messages -->
-    @if (session('success'))
-        <div
-            class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 flex items-center gap-3 text-green-700 animate-fade-in-down">
-            <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-            </svg>
-            <span class="font-medium">{{ session('success') }}</span>
-        </div>
-    @endif
-
     <!-- Status Badge Card -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 text-center mb-8">
-        <h4 class="text-lg font-bold text-slate-900 mb-6">Status Verifikasi</h4>
+        <h4 class="text-lg font-bold text-slate-900 mb-6">Status Proposal</h4>
 
-        @php
-            $dosenStatus = $kelompok->status;
-            $kaprodiStatus = $kelompok->status_kaprodi ?? 'menunggu';
-        @endphp
-
-        @if ($kaprodiStatus == 'menunggu' && $dosenStatus == 'approved')
+        @if (in_array($kelompok->status, ['menunggu', 'submitted']))
             <div class="inline-flex flex-col items-center">
                 <span
                     class="inline-flex items-center px-6 py-3 rounded-full text-lg font-bold bg-yellow-100 text-yellow-700 mb-4 animate-pulse">
@@ -48,9 +32,9 @@
                     </svg>
                     Menunggu Persetujuan
                 </span>
-                <p class="text-slate-500">Kelompok menunggu persetujuan Kaprodi untuk melanjutkan ke tahap berikutnya</p>
+                <p class="text-slate-500">Proposal sedang menunggu persetujuan untuk memulai bimbingan</p>
             </div>
-        @elseif($kaprodiStatus == 'disetujui')
+        @elseif(in_array($kelompok->status, ['disetujui', 'approved']))
             <div class="inline-flex flex-col items-center">
                 <span
                     class="inline-flex items-center px-6 py-3 rounded-full text-lg font-bold bg-green-100 text-green-700 mb-4">
@@ -60,10 +44,9 @@
                     </svg>
                     Disetujui
                 </span>
-                <p class="text-green-600 font-bold">Kelompok telah disetujui oleh Kaprodi dan dapat melanjutkan ke tahap
-                    berikutnya</p>
+                <p class="text-green-600 font-bold">Selamat! Proposal Anda telah disetujui oleh dosen pembimbing</p>
             </div>
-        @elseif($kaprodiStatus == 'ditolak')
+        @elseif(in_array($kelompok->status, ['ditolak', 'rejected']))
             <div class="inline-flex flex-col items-center">
                 <span
                     class="inline-flex items-center px-6 py-3 rounded-full text-lg font-bold bg-red-100 text-red-700 mb-4">
@@ -73,25 +56,7 @@
                     </svg>
                     Ditolak
                 </span>
-                <p class="text-red-500 font-bold">Kelompok ditolak oleh Kaprodi</p>
-                @if ($kelompok->catatan_kaprodi)
-                    <div class="mt-4 p-4 bg-red-50 rounded-xl border border-red-100 max-w-2xl text-left">
-                        <strong class="text-red-800 block mb-1">Alasan Penolakan:</strong>
-                        <p class="text-red-700">{{ $kelompok->catatan_kaprodi }}</p>
-                    </div>
-                @endif
-            </div>
-        @else
-            <div class="inline-flex flex-col items-center">
-                <span
-                    class="inline-flex items-center px-6 py-3 rounded-full text-lg font-bold bg-slate-100 text-slate-600 mb-4">
-                    <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Menunggu Dosen Pembimbing
-                </span>
-                <p class="text-slate-500">Kelompok masih menunggu persetujuan dari dosen pembimbing</p>
+                <p class="text-red-500 font-bold">Proposal belum memenuhi persyaratan untuk bimbingan</p>
             </div>
         @endif
     </div>
@@ -100,7 +65,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <!-- Informasi Kelompok -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden h-full">
-            <div class="bg-slate-800 px-6 py-4 border-b border-slate-700">
+            <div class="bg-uhamka-900 px-6 py-4 border-b border-uhamka-800">
                 <h6 class="font-bold text-white flex items-center">
                     <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -119,42 +84,29 @@
                         <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Judul PKM</span>
                         <p class="text-slate-800 font-semibold leading-relaxed">{{ $kelompok->judul_pkm }}</p>
                     </div>
-                    @if ($kelompok->jenis_pkm)
-                        <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
-                            <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Skema</span>
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                {{ $kelompok->jenis_pkm }}
-                            </span>
-                        </div>
-                    @endif
                     <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
-                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Status Dosen</span>
-                        @php
-                            $dosenStatusColors = [
-                                'approved' => 'bg-green-100 text-green-700',
-                                'pending' => 'bg-yellow-100 text-yellow-700',
-                                'rejected' => 'bg-red-100 text-red-700',
-                            ];
-                        @endphp
+                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Skema</span>
                         <span
-                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $dosenStatusColors[$kelompok->status] ?? 'bg-gray-100 text-gray-700' }}">
-                            {{ ucfirst($kelompok->status) }}
+                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {{ $kelompok->jenis_pkm }}
                         </span>
                     </div>
                     <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
-                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Status Kaprodi</span>
-                        @php
-                            $kaprodiStatusColors = [
-                                'disetujui' => 'bg-green-100 text-green-700',
-                                'menunggu' => 'bg-yellow-100 text-yellow-700',
-                                'ditolak' => 'bg-red-100 text-red-700',
-                            ];
-                        @endphp
-                        <span
-                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $kaprodiStatusColors[$kaprodiStatus] ?? 'bg-gray-100 text-gray-700' }}">
-                            {{ ucfirst($kaprodiStatus) }}
-                        </span>
+                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Dosen Pembimbing</span>
+                        @if ($kelompok->dosenPembimbing)
+                            <div class="flex items-center gap-3 mt-1">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-sm font-bold text-slate-600">
+                                    {{ substr($kelompok->dosenPembimbing->name, 0, 1) }}
+                                </div>
+                                <div>
+                                    <p class="text-slate-900 font-bold">{{ $kelompok->dosenPembimbing->name }}</p>
+                                    <p class="text-xs text-slate-500">{{ $kelompok->dosenPembimbing->program_studi ?? '-' }}</p>
+                                </div>
+                            </div>
+                        @else
+                            <p class="text-slate-500 italic">Belum dipilih</p>
+                        @endif
                     </div>
                     <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
                         <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Tanggal Pengajuan</span>
@@ -172,7 +124,7 @@
 
         <!-- Daftar Anggota -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden h-full">
-            <div class="bg-slate-800 px-6 py-4 border-b border-slate-700">
+            <div class="bg-uhamka-900 px-6 py-4 border-b border-uhamka-800">
                 <h6 class="font-bold text-white flex items-center">
                     <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -196,7 +148,7 @@
                                 <div class="flex items-center gap-2 mb-1">
                                     @if ($anggota->posisi == 'ketua')
                                         <span
-                                            class="px-2 py-0.5 bg-blue-100 text-blue-700 text-[10px] font-bold uppercase rounded-md">Ketua</span>
+                                            class="px-2 py-0.5 bg-uhamka-100 text-uhamka-700 text-[10px] font-bold uppercase rounded-md">Ketua</span>
                                     @else
                                         <span
                                             class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold uppercase rounded-md">Anggota</span>
@@ -217,53 +169,43 @@
         </div>
     </div>
 
-    <!-- Action Buttons -->
-    @php
-        $dosenApproved = $kelompok->status === 'approved';
-        $kaprodiPending = ($kelompok->status_kaprodi ?? 'menunggu') === 'menunggu';
-    @endphp
-
-    @if ($dosenApproved && $kaprodiPending)
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 text-center">
-            <h5 class="font-bold text-slate-900 mb-4">Tindakan Verifikasi</h5>
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <form action="{{ route('kaprodi.kelompok_requests.accept', $kelompok->id) }}" method="POST"
-                    class="inline">
-                    @csrf
-                    <button type="submit"
-                        class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
-                        <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Setujui Kelompok
-                    </button>
-                </form>
-                <form action="{{ route('kaprodi.kelompok_requests.reject', $kelompok->id) }}" method="POST"
-                    class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menolak kelompok ini?')">
-                    @csrf
-                    <button type="submit"
-                        class="inline-flex items-center px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
-                        <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Tolak Kelompok
-                    </button>
-                </form>
-            </div>
-        </div>
-    @else
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 text-center">
-            <div class="text-slate-500">
-                <svg class="w-12 h-12 mx-auto mb-4 text-slate-300" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p class="font-medium">Tindakan sudah dilakukan atau menunggu persetujuan dosen pembimbing.</p>
+    <!-- Catatan Kaprodi -->
+    @if ($kelompok->catatan_kaprodi)
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 mb-8">
+            <div class="bg-yellow-50 rounded-xl p-6 border border-yellow-200">
+                <h3 class="font-semibold text-yellow-800 mb-3 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Catatan Kaprodi
+                </h3>
+                <p class="text-yellow-800 leading-relaxed">{{ $kelompok->catatan_kaprodi }}</p>
             </div>
         </div>
     @endif
+
+    <!-- Action Buttons -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 text-center">
+        <h5 class="font-bold text-slate-900 mb-4">Tindakan</h5>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button
+                class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                Mulai Bimbingan
+            </button>
+            <button
+                class="inline-flex items-center px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-1">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+                Kirim Pesan
+            </button>
+        </div>
+    </div>
 
 @endsection
