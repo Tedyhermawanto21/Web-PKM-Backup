@@ -10,6 +10,7 @@ use App\Models\Kelompok;
 use App\Models\KelompokUser;
 use App\Models\KelompokAnggota;
 use App\Models\Schedule;
+use App\Models\Skema;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -82,7 +83,9 @@ class ProposalController extends Controller
             $query->where('name', 'dosen');
         })->get();
 
-        return view('dashboard.mahasiswa.pengajuan-kelompok.create', compact('dosens', 'submissionSchedule'));
+        $skemas = Skema::all();
+
+        return view('dashboard.mahasiswa.pengajuan-kelompok.create', compact('dosens', 'submissionSchedule', 'skemas'));
     }
 
     public function store(Request $request)
@@ -100,7 +103,7 @@ class ProposalController extends Controller
         $validated = $request->validate([
             'judul_kelompok' => 'required|string|max:255',
             'nama_kelompok' => 'required|string|max:255',
-            'skema' => 'required|string|in:PKM-KC,PKM-RE,PKM-GT,PKM-AI,PKM-PM,PKM-K,PKM-VGK',
+            'skema' => 'required|exists:skemas,nama',
             'dosen_pembimbing_id' => 'required|exists:users,id',
             'anggota.*.nama' => 'required|string|max:255',
             'anggota.*.nim' => 'required|string|max:50',
@@ -203,37 +206,8 @@ class ProposalController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        // Load anggota from pivot (registered users)
-        $pivotRows = KelompokUser::where('kelompok_id', $kelompok->id)->get();
-        $userIds = $pivotRows->pluck('user_id')->filter()->unique()->values()->all();
-        $users = count($userIds) ? User::whereIn('id', $userIds)->get()->keyBy('id') : collect();
-
-        $anggotaRegistered = $pivotRows->map(function ($row) use ($users) {
-            if ($row->user_id && isset($users[$row->user_id])) {
-                $u = $users[$row->user_id];
-                return (object) [
-                    'nama' => $u->name,
-                    'nim' => $u->nim ?? null,
-                    'program_studi' => $u->program_studi ?? null,
-                    'posisi' => $row->posisi ?? 'anggota'
-                ];
-            }
-            return null;
-        })->filter()->values();
-
-        // Load free-form anggota from kelompok_anggota
-        $freeRows = \App\Models\KelompokAnggota::where('kelompok_id', $kelompok->id)->get();
-        $anggotaFree = $freeRows->map(function ($row) {
-            return (object) [
-                'nama' => $row->nama,
-                'nim' => $row->nim,
-                'program_studi' => $row->program_studi,
-                'posisi' => $row->posisi ?? 'anggota'
-            ];
-        });
-
-        // Merge registered and free-form anggota
-        $anggota = $anggotaRegistered->merge($anggotaFree);
+        // Use helper to get unified anggota list
+        $anggota = $kelompok->getAllAnggota();
 
         // Add compatible attributes expected by the view
         $kelompok->nama_kelompok = $kelompok->nama_kelompok;
@@ -265,34 +239,71 @@ class ProposalController extends Controller
         return view('dashboard.mahasiswa.pengajuan-kelompok.show', compact('proposal'));
     }
 
-    public function edit(Proposal $proposal)
+    public function edit($id)
     {
-        // Only allow editing if status is draft or ditolak
-        if (!in_array($proposal->status, ['draft', 'ditolak'])) {
-            return redirect()->route('mahasiswa.pengajuan_kelompok_pkm.show', $proposal->id)
-                ->with('error', 'Proposal tidak dapat diedit karena sudah diajukan atau disetujui.');
+        $user = Auth::user();
+        
+        // Try to find a Proposal first
+        $proposal = Proposal::with(['anggota'])->find($id);
+        
+        if (!$proposal) {
+            // If not a Proposal, try Kelompok
+            $kelompok = Kelompok::with(['dosenPembimbing', 'anggota', 'kelompokAnggota'])->find($id);
+            
+            if (!$kelompok) {
+                abort(404);
+            }
+            
+            // Map Kelompok to Proposal-like object
+            $proposal = $kelompok;
+            $proposal->nama_kelompok = $kelompok->nama_kelompok; // same
+            $proposal->judul_kelompok = $kelompok->judul_pkm;
+            $proposal->skema = $kelompok->jenis_pkm;
+            
+            // Use helper to get unified anggota list
+            // Note: getAllAnggota returns collection of objects, not Models, but view access should be compatible
+            $proposal->anggota = $kelompok->getAllAnggota();
         }
 
-        if ($proposal->ketua_id !== Auth::id()) {
+        if ($proposal->ketua_id !== $user->id) {
             abort(403, 'Unauthorized action.');
+        }
+
+        // Only allow editing if status is draft or ditolak
+        if (!in_array($proposal->status, ['draft', 'ditolak', 'submitted', 'review'])) {
+            return redirect()->route('mahasiswa.pengajuan_kelompok_pkm.show', $proposal->id)
+                ->with('error', 'Proposal tidak dapat diedit karena sudah diajukan atau disetujui.');
         }
 
         $dosens = User::whereHas('role', function($query) {
             $query->where('name', 'dosen');
         })->get();
 
-        $proposal->load('anggota');
+        $skemas = Skema::all();
 
-        return view('dashboard.mahasiswa.pengajuan-kelompok.edit', compact('proposal', 'dosens'));
+        return view('dashboard.mahasiswa.pengajuan-kelompok.edit', compact('proposal', 'dosens', 'skemas'));
     }
 
-    public function update(Request $request, Proposal $proposal)
+    public function update(Request $request, $id)
     {
+        // Try to find Proposal first
+        $proposal = Proposal::find($id);
+        $isKelompok = false;
+        
+        if (!$proposal) {
+            $kelompok = Kelompok::find($id);
+            if (!$kelompok) {
+                abort(404);
+            }
+            $proposal = $kelompok;
+            $isKelompok = true;
+        }
+
         if ($proposal->ketua_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        if (!in_array($proposal->status, ['draft', 'ditolak'])) {
+        if (!in_array($proposal->status, ['draft', 'ditolak', 'submitted', 'review'])) {
             return redirect()->route('mahasiswa.pengajuan_kelompok_pkm.show', $proposal->id)
                 ->with('error', 'Proposal tidak dapat diedit karena sudah diajukan atau disetujui.');
         }
@@ -300,7 +311,7 @@ class ProposalController extends Controller
         $validated = $request->validate([
             'judul_kelompok' => 'required|string|max:255',
             'nama_kelompok' => 'required|string|max:255',
-            'skema' => 'required|string|in:PKM-KC,PKM-RE,PKM-GT,PKM-AI,PKM-PM,PKM-K,PKM-VGK',
+            'skema' => 'required|exists:skemas,nama',
             'dosen_pembimbing_id' => 'required|exists:users,id',
             'anggota.*.nama' => 'required|string|max:255',
             'anggota.*.nim' => 'required|string|max:50',
@@ -309,31 +320,75 @@ class ProposalController extends Controller
 
         DB::beginTransaction();
         try {
-            $proposal->update([
-                'judul_kelompok' => $validated['judul_kelompok'],
-                'nama_kelompok' => $validated['nama_kelompok'],
-                'skema' => $validated['skema'],
-                'dosen_pembimbing_id' => $validated['dosen_pembimbing_id'],
-                'status' => 'menunggu_approval',
-                'catatan_penolakan' => null // Clear rejection notes
-            ]);
+            if ($isKelompok) {
+                // Update Kelompok
+                $proposal->update([
+                    'nama_kelompok' => $validated['nama_kelompok'],
+                    'judul_pkm' => $validated['judul_kelompok'],
+                    'jenis_pkm' => $validated['skema'],
+                    'dosen_pembimbing_id' => $validated['dosen_pembimbing_id'],
+                    'status' => 'submitted', // Reset to submitted
+                ]);
+                
+                 // Handle Anggota for Kelompok
+                 // 1. Detach old members (keep ketua)
+                 $proposal->anggota()->wherePivot('posisi', '!=', 'ketua')->detach();
+                 // 2. Delete old free-text members
+                 $proposal->kelompokAnggota()->delete();
+                 
+                 // 3. Add new members
+                 $skipped = 0;
+                if ($request->has('anggota')) {
+                    $anggotaData = array_slice($request->anggota, 0, 4);
+                    foreach ($anggotaData as $anggota) {
+                        $memberUser = User::where('nim', $anggota['nim'])->first();
+                        $currentUser = Auth::user();
+                        
+                        if ($memberUser && $memberUser->id !== $currentUser->id) {
+                            try {
+                                $proposal->anggota()->attach($memberUser->id, ['posisi' => 'anggota']);
+                            } catch (\Exception $e) {}
+                        } else {
+                            \App\Models\KelompokAnggota::create([
+                                'kelompok_id' => $proposal->id,
+                                'user_id' => null,
+                                'posisi' => 'anggota',
+                                'nama' => $anggota['nama'],
+                                'nim' => $anggota['nim'],
+                                'program_studi' => $anggota['program_studi'],
+                            ]);
+                        }
+                    }
+                }
 
-            // Delete old anggota (except ketua) and recreate
-            ProposalAnggota::where('proposal_id', $proposal->id)
-                ->where('posisi', 'anggota')
-                ->delete();
-
-            // Add new members
-            if ($request->has('anggota')) {
-                $anggotaData = array_slice($request->anggota, 0, 4);
-                foreach ($anggotaData as $anggota) {
-                    ProposalAnggota::create([
-                        'proposal_id' => $proposal->id,
-                        'nama' => $anggota['nama'],
-                        'nim' => $anggota['nim'],
-                        'program_studi' => $anggota['program_studi'],
-                        'posisi' => 'anggota'
-                    ]);
+            } else {
+                // Legacy Proposal Update
+                $proposal->update([
+                    'judul_kelompok' => $validated['judul_kelompok'],
+                    'nama_kelompok' => $validated['nama_kelompok'],
+                    'skema' => $validated['skema'],
+                    'dosen_pembimbing_id' => $validated['dosen_pembimbing_id'],
+                    'status' => 'menunggu_approval',
+                    'catatan_penolakan' => null
+                ]);
+    
+                // Delete old anggota
+                ProposalAnggota::where('proposal_id', $proposal->id)
+                    ->where('posisi', 'anggota')
+                    ->delete();
+    
+                // Add new members
+                if ($request->has('anggota')) {
+                    $anggotaData = array_slice($request->anggota, 0, 4);
+                    foreach ($anggotaData as $anggota) {
+                        ProposalAnggota::create([
+                            'proposal_id' => $proposal->id,
+                            'nama' => $anggota['nama'],
+                            'nim' => $anggota['nim'],
+                            'program_studi' => $anggota['program_studi'],
+                            'posisi' => 'anggota'
+                        ]);
+                    }
                 }
             }
 
@@ -350,16 +405,35 @@ class ProposalController extends Controller
         }
     }
 
-    public function destroy(Proposal $proposal)
+    public function destroy($id)
     {
+        // Try to find Proposal first
+        $proposal = Proposal::find($id);
+        $isKelompok = false;
+        
+        if (!$proposal) {
+            $kelompok = Kelompok::find($id);
+            if (!$kelompok) {
+                abort(404);
+            }
+            $proposal = $kelompok;
+            $isKelompok = true;
+        }
+
         if ($proposal->ketua_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
         // Only allow deletion if status is draft or ditolak
-        if (!in_array($proposal->status, ['draft', 'ditolak'])) {
+        if (!in_array($proposal->status, ['draft', 'ditolak', 'submitted'])) {
             return redirect()->route('mahasiswa.pengajuan_kelompok_pkm.index')
                 ->with('error', 'Proposal tidak dapat dihapus karena sudah diajukan atau disetujui.');
+        }
+
+        // For Kelompok, we need to handle relation deletion if not CASCADE
+        if ($isKelompok) {
+            $proposal->kelompokAnggota()->delete();
+            $proposal->anggota()->detach();
         }
 
         $proposal->delete();

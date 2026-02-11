@@ -44,7 +44,12 @@ Route::middleware('auth')->group(function () {
             case 'kaprodi':
                 return view('dashboard.kaprodi', compact('user'));
             case 'admin':
-                return view('dashboard.admin', compact('user'));
+                // Fetch stats for Skemas
+                $skemaStats = \App\Models\Skema::withCount('proposals')->get();
+                $totalUsers = \App\Models\User::count();
+                $totalProposals = \App\Models\Proposal::count();
+                
+                return view('dashboard.admin', compact('user', 'skemaStats', 'totalUsers', 'totalProposals'));
             case 'reviewer':
                 // Provide assigned counts for reviewer dashboard
                 $totalAssigned = \App\Models\ProposalReviewer::where('reviewer_id', $user->id)->count();
@@ -80,6 +85,7 @@ Route::middleware('auth')->group(function () {
             'destroy' => 'pengajuan_kelompok_pkm.destroy',
         ]);
         Route::resource('kelompoks', App\Http\Controllers\Mahasiswa\KelompokController::class);
+        Route::get('upload/{upload}/download', [App\Http\Controllers\Mahasiswa\UploadController::class, 'download'])->name('upload.download');
         Route::resource('upload', App\Http\Controllers\Mahasiswa\UploadController::class);
         Route::get('revisi', [App\Http\Controllers\Mahasiswa\RevisionController::class, 'index'])->name('revisi.index');
     });
@@ -135,6 +141,8 @@ Route::middleware('auth')->group(function () {
 
         Route::resource('schedules', App\Http\Controllers\Admin\ScheduleController::class);
         Route::patch('schedules/{schedule}/toggle-status', [App\Http\Controllers\Admin\ScheduleController::class, 'toggleStatus'])->name('schedules.toggle-status');
+
+        Route::resource('skemas', App\Http\Controllers\Admin\SkemaController::class);
     });
 
     // Reviewer Routes

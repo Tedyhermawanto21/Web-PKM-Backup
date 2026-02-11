@@ -75,10 +75,10 @@
             <p class="text-xs text-slate-400 mt-2">Bergabung sebagai anggota atau ketua.</p>
 
             <div class="mt-6">
-                <button
+                <a href="{{ route('mahasiswa.kelompoks.index') }}"
                     class="w-full inline-flex justify-center items-center py-2.5 px-4 border border-slate-200 rounded-xl shadow-sm text-sm font-bold text-slate-700 bg-white hover:bg-slate-50 focus:outline-none transition-all">
                     Lihat Detail Kelompok
-                </button>
+                </a>
             </div>
         </div>
 

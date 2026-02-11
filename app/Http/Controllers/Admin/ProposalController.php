@@ -13,14 +13,29 @@ use Illuminate\Support\Facades\Log;
 
 class ProposalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $proposals = Proposal::whereNotNull('file_proposal')
-            ->with(['ketua', 'dosenPembimbing'])
-            ->latest()
-            ->get();
+        // Fetch stats for Skemas with proposal counts
+        $skemas = \App\Models\Skema::withCount(['proposals' => function($query) {
+            $query->whereNotNull('file_proposal');
+        }])->get();
 
-        return view('dashboard.admin.proposals.index', compact('proposals'));
+        // Base query
+        $query = Proposal::whereNotNull('file_proposal')
+            ->with(['ketua', 'dosenPembimbing'])
+            ->latest();
+
+        // Filter by Skema if selected
+        if ($request->has('skema') && $request->skema != '') {
+            $query->where('skema', $request->skema);
+            $selectedSkema = \App\Models\Skema::where('nama', $request->skema)->first();
+        } else {
+            $selectedSkema = null;
+        }
+
+        $proposals = $query->get();
+
+        return view('dashboard.admin.proposals.index', compact('proposals', 'skemas', 'selectedSkema'));
     }
 
     public function show(Proposal $proposal)

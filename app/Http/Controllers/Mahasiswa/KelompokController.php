@@ -30,6 +30,10 @@ class KelompokController extends Controller
             ->unique('id')
             ->values();
 
+        if ($kelompoks->isNotEmpty()) {
+            return redirect()->route('mahasiswa.kelompoks.show', $kelompoks->first());
+        }
+
         return view('dashboard.mahasiswa.kelompoks.index', compact('kelompoks'));
     }
 

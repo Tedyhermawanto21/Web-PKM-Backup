@@ -19,64 +19,65 @@
         </div>
     @endif
 
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div
-            class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-uhamka-200 transition-all group">
+    <!-- Skema Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- 'All' Card -->
+        <a href="{{ route('admin.pengajuan_kelompok_pkm.index') }}"
+            class="bg-white p-6 rounded-2xl shadow-sm border {{ is_null($selectedSkema) ? 'border-uhamka-500 ring-2 ring-uhamka-200' : 'border-slate-100 hover:border-uhamka-200' }} hover:shadow-md transition-all group">
             <div class="flex items-start justify-between mb-4">
                 <div
-                    class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-500 text-xl group-hover:scale-110 transition-transform">
-                    ⏳
+                    class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center text-slate-600 text-xl group-hover:scale-110 transition-transform">
+                    📚
                 </div>
-                <span
-                    class="px-3 py-1 bg-orange-50 text-orange-600 text-xs font-bold rounded-lg uppercase tracking-wider">Menunggu</span>
+                
             </div>
             <div class="flex items-baseline gap-2">
-                <span
-                    class="text-4xl font-extrabold text-slate-900">{{ $proposals->where('status_admin', 'menunggu')->count() }}</span>
-                <span class="text-sm font-bold text-slate-400">Proposal</span>
+                <span class="text-3xl font-extrabold text-slate-900">{{ $skemas->sum('proposals_count') }}</span>
+                <span class="text-sm font-bold text-slate-400">Total Proposal</span>
             </div>
-        </div>
+            <p class="text-xs text-slate-500 mt-2 font-medium">Semua Skema</p>
+        </a>
 
-        <div
-            class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-green-200 transition-all group">
-            <div class="flex items-start justify-between mb-4">
-                <div
-                    class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-600 text-xl group-hover:scale-110 transition-transform">
-                    ✅
+        @foreach ($skemas as $skema)
+            <a href="{{ route('admin.pengajuan_kelompok_pkm.index', ['skema' => $skema->nama]) }}"
+                class="bg-white p-6 rounded-2xl shadow-sm border {{ isset($selectedSkema) && $selectedSkema->id == $skema->id ? 'border-' . $skema->warna . '-500 ring-2 ring-' . $skema->warna . '-200' : 'border-slate-100 hover:border-' . $skema->warna . '-200' }} hover:shadow-md transition-all group">
+                <div class="flex items-start justify-between mb-4">
+                    <div
+                        class="w-12 h-12 bg-{{ $skema->warna }}-50 rounded-xl flex items-center justify-center text-{{ $skema->warna }}-600 text-xl group-hover:scale-110 transition-transform">
+                        📁
+                    </div>
+                    <span
+                        class="px-2 py-1 bg-{{ $skema->warna }}-50 text-{{ $skema->warna }}-600 text-[10px] font-bold rounded-lg uppercase tracking-wider">{{ $skema->nama }}</span>
                 </div>
-                <span
-                    class="px-3 py-1 bg-green-50 text-green-600 text-xs font-bold rounded-lg uppercase tracking-wider">Disetujui</span>
-            </div>
-            <div class="flex items-baseline gap-2">
-                <span
-                    class="text-4xl font-extrabold text-slate-900">{{ $proposals->where('status_admin', 'disetujui')->count() }}</span>
-                <span class="text-sm font-bold text-slate-400">Proposal</span>
-            </div>
-        </div>
-
-        <div
-            class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-red-200 transition-all group">
-            <div class="flex items-start justify-between mb-4">
-                <div
-                    class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center text-red-500 text-xl group-hover:scale-110 transition-transform">
-                    ❌
+                <div class="flex items-baseline gap-2">
+                    <span class="text-3xl font-extrabold text-slate-900">{{ $skema->proposals_count }}</span>
+                    <span class="text-sm font-bold text-slate-400">Proposal</span>
                 </div>
-                <span
-                    class="px-3 py-1 bg-red-50 text-red-600 text-xs font-bold rounded-lg uppercase tracking-wider">Ditolak</span>
-            </div>
-            <div class="flex items-baseline gap-2">
-                <span
-                    class="text-4xl font-extrabold text-slate-900">{{ $proposals->where('status_admin', 'ditolak')->count() }}</span>
-                <span class="text-sm font-bold text-slate-400">Proposal</span>
-            </div>
-        </div>
+                <p class="text-xs text-slate-500 mt-2 font-medium truncate">{{ $skema->label }}</p>
+            </a>
+        @endforeach
     </div>
 
     <!-- Proposals Table -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div class="p-6 border-b border-slate-100">
-            <h3 class="font-bold text-lg text-slate-900">Daftar Proposal PKM</h3>
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+            <div>
+                <h3 class="font-bold text-lg text-slate-900">
+                    @if($selectedSkema)
+                        Daftar Proposal {{ $selectedSkema->nama }}
+                    @else
+                        Daftar Semua Proposal
+                    @endif
+                </h3>
+                @if($selectedSkema)
+                    <p class="text-sm text-slate-500">{{ $selectedSkema->label }}</p>
+                @endif
+            </div>
+            @if($selectedSkema)
+                <a href="{{ route('admin.pengajuan_kelompok_pkm.index') }}" class="text-sm text-uhamka-600 font-bold hover:underline">
+                    Lihat Semua
+                </a>
+            @endif
         </div>
 
         @if ($proposals->count() > 0)
@@ -118,7 +119,7 @@
                                     </a>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    @if ($proposal->status_admin == 'menunggu')
+                                    @if ($proposal->status_admin == 'menunggu' || $proposal->status_admin == 'menunggu_alokasi')
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700 animate-pulse">Menunggu
                                             Review</span>
@@ -128,6 +129,13 @@
                                     @elseif($proposal->status_admin == 'ditolak')
                                         <span
                                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">Ditolak</span>
+                                    @elseif($proposal->status_admin == 'ditugaskan')
+                                        <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-700">Reviewer
+                                            Assigned</span>
+                                    @else 
+                                         <span
+                                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">{{ $proposal->status_admin ?? 'Menunggu' }}</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-center">
@@ -153,7 +161,10 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                 </svg>
-                <p>Belum ada proposal yang diupload.</p>
+                <p>Belum ada proposal yang sesuai.</p>
+                @if($selectedSkema)
+                     <a href="{{ route('admin.pengajuan_kelompok_pkm.index') }}" class="mt-2 text-uhamka-600 font-bold hover:underline">Lihat Semua Skema</a>
+                @endif
             </div>
         @endif
     </div>

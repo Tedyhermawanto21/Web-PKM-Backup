@@ -1,11 +1,11 @@
 @extends('layouts.app-modern')
 
-@section('title', 'Pengajuan Proposal')
+@section('title', 'Daftar Proposal Kelompok Bimbingan')
 
 @section('content')
     <!-- Page Heading -->
     <div class="mb-8">
-        <h1 class="text-2xl font-bold text-slate-800">Pengajuan Proposal PKM</h1>
+        <h1 class="text-2xl font-bold text-slate-800">Daftar Proposal Kelompok Bimbingan</h1>
         <p class="text-slate-500">Daftar proposal mahasiswa yang perlu direview.</p>
     </div>
 

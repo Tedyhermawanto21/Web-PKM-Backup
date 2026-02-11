@@ -227,6 +227,7 @@ class UploadController extends Controller
 
     public function update(Request $request, Proposal $upload)
     {
+        // ... existing update logic ...
         // Verify ownership
         if ($upload->ketua_id !== Auth::id()) {
             abort(403);
@@ -278,5 +279,30 @@ class UploadController extends Controller
         }
 
         return redirect()->back()->with('error', 'Gagal mengupload file.');
+    }
+
+    public function download(Proposal $upload)
+    {
+        // Verify ownership (ketua or anggota)
+        $isMember = $upload->ketua_id === Auth::id() || $upload->anggota->contains('id', Auth::id());
+        
+        // Also allow if stored via pivot/other means for members, but for now simple check:
+        // Since $upload->anggota might not be fully loaded with User models if manual query used in show.
+        // Let's stick to ketua check + simple成员 check if easier, or just trust the logged in user context for now.
+        // Actually, let's look at `show` method logic. It loads relationships.
+        // To be safe and quick, allow ketua.
+        if ($upload->ketua_id !== Auth::id()) {
+           // check members
+           $kelompok = \App\Models\Kelompok::where('ketua_id', $upload->ketua_id)->where('nama_kelompok', $upload->nama_kelompok)->first();
+           if (!$kelompok || !\App\Models\KelompokUser::where('kelompok_id', $kelompok->id)->where('user_id', Auth::id())->exists()) {
+               abort(403);
+           }
+        }
+
+        if (!$upload->file_proposal || !Storage::disk('public')->exists($upload->file_proposal)) {
+            return redirect()->back()->with('error', 'File tidak ditemukan.');
+        }
+
+        return Storage::disk('public')->download($upload->file_proposal);
     }
 }

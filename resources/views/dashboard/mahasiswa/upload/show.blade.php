@@ -168,7 +168,7 @@
                 @endif
 
                 @if ($proposal->file_proposal)
-                    <a href="{{ Storage::url($proposal->file_proposal) }}" target="_blank"
+                    <a href="{{ route('mahasiswa.upload.download', $proposal->id) }}"
                         class="w-full inline-flex items-center justify-center px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all mb-2">
                         <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

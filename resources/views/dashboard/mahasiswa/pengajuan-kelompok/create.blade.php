@@ -94,20 +94,12 @@
                                         class="w-full rounded-xl border-slate-300 bg-slate-50 text-slate-800 focus:bg-white focus:border-uhamka-500 focus:ring-4 focus:ring-uhamka-100 transition-all duration-200 py-3 px-4 shadow-sm appearance-none @error('skema') border-red-500 focus:ring-red-100 @enderror"
                                         id="skema" name="skema" required>
                                         <option value="">-- Pilih Skema PKM --</option>
-                                        <option value="PKM-KC" {{ old('skema') == 'PKM-KC' ? 'selected' : '' }}>PKM-KC
-                                            (Karsa Cipta)</option>
-                                        <option value="PKM-RE" {{ old('skema') == 'PKM-RE' ? 'selected' : '' }}>PKM-RE
-                                            (Riset Eksakta)</option>
-                                        <option value="PKM-GT" {{ old('skema') == 'PKM-GT' ? 'selected' : '' }}>PKM-GT
-                                            (Gagasan Tertulis)</option>
-                                        <option value="PKM-AI" {{ old('skema') == 'PKM-AI' ? 'selected' : '' }}>PKM-AI
-                                            (Artikel Ilmiah)</option>
-                                        <option value="PKM-PM" {{ old('skema') == 'PKM-PM' ? 'selected' : '' }}>PKM-PM
-                                            (Pengabdian Masyarakat)</option>
-                                        <option value="PKM-K" {{ old('skema') == 'PKM-K' ? 'selected' : '' }}>PKM-K
-                                            (Kewirausahaan)</option>
-                                        <option value="PKM-VGK" {{ old('skema') == 'PKM-VGK' ? 'selected' : '' }}>PKM-VGK
-                                            (Video Gagasan Konstruktif)</option>
+                                        @foreach ($skemas as $skemaItem)
+                                            <option value="{{ $skemaItem->nama }}"
+                                                {{ old('skema') == $skemaItem->nama ? 'selected' : '' }}>
+                                                {{ $skemaItem->nama }} ({{ $skemaItem->label }})
+                                            </option>
+                                        @endforeach
                                     </select>
                                     <div
                                         class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
