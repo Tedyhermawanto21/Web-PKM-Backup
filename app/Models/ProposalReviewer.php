@@ -13,7 +13,12 @@ class ProposalReviewer extends Model
         'reviewer_id',
         'status',
         'score',
-        'comments'
+        'comments',
+        'reviewed_at'
+    ];
+
+    protected $casts = [
+        'reviewed_at' => 'datetime'
     ];
 
     public function proposal()

@@ -46,7 +46,10 @@ class ProposalApprovalController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $kelompok->load(['ketua', 'anggota']);
+        $kelompok->load(['ketua', 'anggota', 'dosenPembimbing']);
+        
+        // Use helper to get unified anggota list
+        $kelompok->anggota = $kelompok->getAllAnggota();
 
         return view('dashboard.dosen.kelompok_requests.show', compact('kelompok'));
     }
@@ -95,7 +98,11 @@ class ProposalApprovalController extends Controller
 
         $proposal->load(['ketua', 'anggota']);
 
-        return view('dashboard.dosen.proposals.show', compact('proposal'));
+        // Fetch associated Kelompok to get consistent member list
+        $kelompok = \App\Models\Kelompok::where('ketua_id', $proposal->ketua_id)->latest()->first();
+        $allAnggota = $kelompok ? $kelompok->getAllAnggota() : collect([]);
+
+        return view('dashboard.dosen.proposals.show', compact('proposal', 'allAnggota'));
     }
 
     public function approve(Proposal $proposal)

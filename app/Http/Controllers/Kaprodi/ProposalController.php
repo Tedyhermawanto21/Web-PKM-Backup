@@ -10,21 +10,51 @@ use Illuminate\Support\Facades\Auth;
 
 class ProposalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // Ambil proposal yang dosen sudah setuju
-        $proposals = Proposal::with(['ketua', 'dosenPembimbing', 'anggota'])
-            ->where('status_dosen', 'disetujui')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Filter by user's prodi
+        $user = Auth::user();
+        $prodi = $user->program_studi;
 
-        return view('dashboard.kaprodi.pengajuan-kelompok.index', compact('proposals'));
+        $query = Proposal::with(['ketua', 'dosenPembimbing', 'anggota'])
+            ->whereHas('ketua', function ($q) use ($prodi) {
+                $q->where('program_studi', $prodi);
+            })
+            ->where('status_dosen', 'disetujui');
+
+        // Filter by Skema if provided
+        if ($request->has('skema')) {
+            $query->where('skema', $request->skema);
+        }
+
+        $proposals = $query->orderBy('created_at', 'desc')->get();
+
+        // Get selected skema for view
+        $selectedSkema = null;
+        if ($request->has('skema')) {
+            $selectedSkema = \App\Models\Skema::where('nama', $request->skema)->first();
+        }
+
+        // Calculate skema stats for the cards, filtered by prodi
+        $skemaStats = \App\Models\Skema::withCount(['proposals' => function ($query) use ($prodi) {
+            $query->with('ketua')->whereHas('ketua', function ($q) use ($prodi) {
+                $q->where('program_studi', $prodi);
+            })->where('status_dosen', 'disetujui');
+        }])->get();
+
+        return view('dashboard.kaprodi.proposals.index', compact('proposals', 'selectedSkema', 'skemaStats'));
     }
 
     public function show($id)
     {
         $proposal = Proposal::with(['ketua', 'dosenPembimbing', 'anggota'])->findOrFail($id);
-        return view('dashboard.kaprodi.pengajuan-kelompok.show', compact('proposal'));
+        
+        // Fetch associated Kelompok to get consistent member list
+        $kelompok = \App\Models\Kelompok::where('ketua_id', $proposal->ketua_id)->latest()->first();
+        $allAnggota = $kelompok ? $kelompok->getAllAnggota() : collect([]);
+        
+        return view('dashboard.kaprodi.proposals.show', compact('proposal', 'allAnggota'));
     }
 
     public function approve(Request $request, $id)

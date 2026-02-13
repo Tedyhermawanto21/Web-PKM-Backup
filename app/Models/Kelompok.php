@@ -18,7 +18,8 @@ class Kelompok extends Model
         'dosen_pembimbing_id',
         'status',
         'status_kaprodi',
-        'catatan_kaprodi'
+        'catatan_kaprodi',
+        'file_proposal'
     ];
 
     public function ketua(): BelongsTo

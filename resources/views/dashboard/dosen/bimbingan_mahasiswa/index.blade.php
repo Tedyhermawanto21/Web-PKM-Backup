@@ -43,6 +43,7 @@
                             <th class="px-6 py-3">Skema</th>
                             <th class="px-6 py-3">Ketua</th>
                             <th class="px-6 py-3">Jumlah Anggota</th>
+                            <th class="px-6 py-3">Status Dosen</th>
                             <th class="px-6 py-3">Status Kaprodi</th>
                             <th class="px-6 py-3">Aksi</th>
                         </tr>
@@ -60,16 +61,21 @@
                                 <td class="px-6 py-4">{{ $k->ketua->name }}</td>
                                 <td class="px-6 py-4">{{ $k->anggota->count() + 1 }} orang</td>
                                 <td class="px-6 py-4">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-700">
+                                        Disetujui
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4">
                                     @php
                                         $statusColors = [
                                             'menunggu' => 'bg-yellow-100 text-yellow-700',
                                             'disetujui' => 'bg-green-100 text-green-700',
                                             'ditolak' => 'bg-red-100 text-red-700',
                                         ];
+                                        $kaprodiStatus = $k->status_kaprodi ?? 'menunggu';
                                     @endphp
-                                    <span
-                                        class="px-2 py-1 rounded-full text-xs {{ $statusColors[$k->status_kaprodi] ?? 'bg-gray-100 text-gray-700' }}">
-                                        {{ ucfirst($k->status_kaprodi) }}
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold {{ $statusColors[$kaprodiStatus] ?? 'bg-gray-100 text-gray-700' }}">
+                                        {{ ucfirst($kaprodiStatus) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4">

@@ -133,6 +133,15 @@ class UploadController extends Controller
                 'status_admin' => 'pending'
             ]);
 
+            // Sync to Kelompok
+            $kelompok = \App\Models\Kelompok::where('ketua_id', $proposal->ketua_id)
+                ->where('nama_kelompok', $proposal->nama_kelompok)
+                ->first();
+            
+            if ($kelompok) {
+                $kelompok->update(['file_proposal' => $filePath]);
+            }
+
             return redirect()->route('mahasiswa.upload.index')
                 ->with('success', 'File proposal berhasil diupload dan akan direview oleh admin.');
         }
@@ -273,6 +282,15 @@ class UploadController extends Controller
                 'status_admin' => 'pending',
                 'catatan_admin' => null
             ]);
+
+            // Sync to Kelompok
+            $kelompok = \App\Models\Kelompok::where('ketua_id', $upload->ketua_id)
+                ->where('nama_kelompok', $upload->nama_kelompok)
+                ->first();
+            
+            if ($kelompok) {
+                $kelompok->update(['file_proposal' => $filePath]);
+            }
 
             return redirect()->route('mahasiswa.upload.index')
                 ->with('success', 'File proposal berhasil diupload ulang dan akan direview oleh admin.');

@@ -38,32 +38,30 @@
         </div>
     </div>
 
-    <!-- Quick Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div
-            class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md hover:border-uhamka-200 transition-all group">
-            <div
-                class="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                📊
-            </div>
-            <div>
-                <div class="text-slate-500 text-xs font-bold uppercase">Total Proposal</div>
-                <div class="text-2xl font-bold text-slate-900">-</div>
-                <div class="text-xs text-slate-400">Data Prodi</div>
-            </div>
+    <!-- Skema List Section -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-8">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="font-bold text-lg text-slate-900">Daftar Skema PKM</h3>
+            <a href="{{ route('kaprodi.pengajuan_kelompok_pkm.index') }}" class="text-sm font-bold text-uhamka-600 hover:text-uhamka-700">Lihat Semua &rarr;</a>
         </div>
-
-        <div
-            class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md hover:border-uhamka-200 transition-all group">
-            <div
-                class="w-14 h-14 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                👨‍🏫
-            </div>
-            <div>
-                <div class="text-slate-500 text-xs font-bold uppercase">Dosen Pembimbing</div>
-                <div class="text-2xl font-bold text-slate-900">-</div>
-                <div class="text-xs text-slate-400">Aktif Membimbing</div>
-            </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            @foreach($skemaStats as $skema)
+                <a href="{{ route('kaprodi.pengajuan_kelompok_pkm.index', ['skema' => $skema->nama]) }}" class="p-4 rounded-xl border border-slate-200 hover:border-{{ $skema->warna ?? 'slate' }}-500 hover:bg-{{ $skema->warna ?? 'slate' }}-50 transition-all flex items-center gap-4 group">
+                    <div class="w-12 h-12 rounded-full bg-{{ $skema->warna ?? 'slate' }}-100 text-{{ $skema->warna ?? 'slate' }}-600 flex items-center justify-center font-bold text-lg group-hover:scale-110 transition-transform">
+                        {{ str_replace('PKM-', '', $skema->nama) }}
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 group-hover:text-{{ $skema->warna ?? 'slate' }}-700 transition-colors">{{ $skema->nama }}</h4>
+                        <p class="text-xs text-slate-500">{{ $skema->label }}</p>
+                    </div>
+                    <div class="ml-auto">
+                        <span class="px-2 py-1 rounded-md bg-white border border-slate-200 text-xs font-bold text-slate-600">
+                            {{ $skema->proposals_count }} Proposal
+                        </span>
+                    </div>
+                </a>
+            @endforeach
         </div>
     </div>
 

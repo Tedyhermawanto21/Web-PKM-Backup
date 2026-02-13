@@ -22,14 +22,13 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'nim',
         'email',
         'password',
         'program_studi',
         'no_hp',
         'jenis_kelamin',
-        'nidn',
         'role_id',
+        'nomor_induk_id',
     ];
 
     /**
@@ -112,5 +111,19 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Proposal::class, 'proposal_reviewer', 'reviewer_id', 'proposal_id')
                     ->withPivot(['status', 'score', 'comments', 'created_at', 'updated_at']);
+    }
+    public function nomorInduk(): BelongsTo
+    {
+        return $this->belongsTo(NomorInduk::class);
+    }
+
+    public function getNimAttribute()
+    {
+        return $this->nomorInduk && $this->nomorInduk->type === 'nim' ? $this->nomorInduk->value : null;
+    }
+
+    public function getNidnAttribute()
+    {
+        return $this->nomorInduk && $this->nomorInduk->type === 'nidn' ? $this->nomorInduk->value : null;
     }
 }

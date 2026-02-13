@@ -43,8 +43,8 @@
                 class="bg-white p-6 rounded-2xl shadow-sm border {{ isset($selectedSkema) && $selectedSkema->id == $skema->id ? 'border-' . $skema->warna . '-500 ring-2 ring-' . $skema->warna . '-200' : 'border-slate-100 hover:border-' . $skema->warna . '-200' }} hover:shadow-md transition-all group">
                 <div class="flex items-start justify-between mb-4">
                     <div
-                        class="w-12 h-12 bg-{{ $skema->warna }}-50 rounded-xl flex items-center justify-center text-{{ $skema->warna }}-600 text-xl group-hover:scale-110 transition-transform">
-                        📁
+                        class="w-12 h-12 bg-{{ $skema->warna }}-100 rounded-full flex items-center justify-center text-{{ $skema->warna }}-700 font-extrabold text-sm group-hover:scale-110 transition-transform tracking-tight border-2 border-white shadow-sm ring-2 ring-{{ $skema->warna }}-50">
+                        {{ str_replace('PKM-', '', $skema->nama) }}
                     </div>
                     <span
                         class="px-2 py-1 bg-{{ $skema->warna }}-50 text-{{ $skema->warna }}-600 text-[10px] font-bold rounded-lg uppercase tracking-wider">{{ $skema->nama }}</span>

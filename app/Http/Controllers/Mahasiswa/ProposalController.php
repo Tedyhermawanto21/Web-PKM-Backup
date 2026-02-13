@@ -139,7 +139,8 @@ class ProposalController extends Controller
                 $anggotaData = array_slice($request->anggota, 0, 4); // Limit to 4 members
                 foreach ($anggotaData as $anggota) {
                     // find user by nim
-                    $memberUser = User::where('nim', $anggota['nim'])->first();
+                    $nomorInduk = \App\Models\NomorInduk::where('value', $anggota['nim'])->where('type', 'nim')->first();
+                    $memberUser = $nomorInduk ? $nomorInduk->user : null;
                     if ($memberUser && $memberUser->id !== $user->id) {
                         // attach registered user with pivot info
                         try {
@@ -233,6 +234,9 @@ class ProposalController extends Controller
 
         // Preserve Kaprodi status for the mahasiswa view
         $kelompok->status_kaprodi = $kelompok->status_kaprodi ?? 'menunggu';
+        
+        // Map status_dosen based on main status, similar to index method
+        $kelompok->status_dosen = $kelompok->status === 'disetujui' ? 'disetujui' : ($kelompok->status === 'ditolak' ? 'ditolak' : 'menunggu');
 
         $proposal = $kelompok; // alias so view can use $proposal
 
@@ -341,7 +345,8 @@ class ProposalController extends Controller
                 if ($request->has('anggota')) {
                     $anggotaData = array_slice($request->anggota, 0, 4);
                     foreach ($anggotaData as $anggota) {
-                        $memberUser = User::where('nim', $anggota['nim'])->first();
+                        $nomorInduk = \App\Models\NomorInduk::where('value', $anggota['nim'])->where('type', 'nim')->first();
+                        $memberUser = $nomorInduk ? $nomorInduk->user : null;
                         $currentUser = Auth::user();
                         
                         if ($memberUser && $memberUser->id !== $currentUser->id) {

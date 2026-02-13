@@ -123,7 +123,7 @@
                                 <li class="flex items-center justify-between p-3 border rounded-lg">
                                     <div>
                                         <div class="font-bold">{{ $rev->name }}</div>
-                                        <div class="text-xs text-slate-500">{{ $rev->email }}</div>
+                                        <div class="text-xs text-slate-500">{{ $rev->nidn ?? $rev->email }}</div>
                                     </div>
                                     <form
                                         action="{{ route('admin.pengajuan_kelompok_pkm.unassign_reviewer', $proposal->id) }}"
@@ -131,7 +131,7 @@
                                         @csrf
                                         <input type="hidden" name="reviewer_id" value="{{ $rev->id }}">
                                         <button type="submit"
-                                            class="px-3 py-1.5 bg-red-50 text-red-600 rounded">Hapus</button>
+                                            class="px-3 py-1.5 bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors">Hapus</button>
                                     </form>
                                 </li>
                             @endforeach
@@ -141,22 +141,166 @@
                     @endif
                 </div>
 
-                <form action="{{ route('admin.pengajuan_kelompok_pkm.assign_reviewer', $proposal->id) }}" method="POST">
+                <form action="{{ route('admin.pengajuan_kelompok_pkm.assign_reviewer', $proposal->id) }}" method="POST"
+                    id="assignReviewerForm">
                     @csrf
+                    <input type="hidden" name="reviewer_id" id="selected_reviewer_id">
                     <div class="mb-3">
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Pilih Reviewer</label>
-                        <select name="reviewer_id" class="w-full rounded-xl border-slate-300 p-2">
-                            <option value="">-- Pilih Reviewer --</option>
-                            @foreach ($availableReviewers as $rev)
-                                <option value="{{ $rev->id }}">{{ $rev->name }} ({{ $rev->email }})</option>
-                            @endforeach
-                        </select>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Cari Dosen untuk Reviewer</label>
+                        <div class="relative">
+                            <input type="text" id="dosenSearchInput"
+                                placeholder="Ketik nama, NIDN, atau program studi..."
+                                class="w-full rounded-xl border-slate-300 p-2 pr-10" autocomplete="off">
+                            <div class="absolute right-3 top-2.5">
+                                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                            <div id="searchResults"
+                                class="hidden absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                            </div>
+                        </div>
+                        <div id="selectedDosen" class="hidden mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-bold text-slate-800" id="selectedDosenName"></div>
+                                    <div class="text-xs text-slate-600" id="selectedDosenInfo"></div>
+                                </div>
+                                <button type="button" onclick="clearSelection()"
+                                    class="text-red-500 hover:text-red-700">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div>
-                        <button type="submit" class="px-4 py-2 bg-uhamka-500 text-white rounded-lg">Tugaskan
+                        <button type="submit" id="assignButton" disabled
+                            class="px-4 py-2 bg-uhamka-500 text-white rounded-lg disabled:bg-slate-300 disabled:cursor-not-allowed">Tugaskan
                             Reviewer</button>
                     </div>
                 </form>
+            </div>
+
+            <script>
+                let debounceTimer;
+                const searchInput = document.getElementById('dosenSearchInput');
+                const searchResults = document.getElementById('searchResults');
+                const selectedDosen = document.getElementById('selectedDosen');
+                const selectedDosenName = document.getElementById('selectedDosenName');
+                const selectedDosenInfo = document.getElementById('selectedDosenInfo');
+                const selectedReviewerId = document.getElementById('selected_reviewer_id');
+                const assignButton = document.getElementById('assignButton');
+
+                searchInput.addEventListener('input', function(e) {
+                    const query = e.target.value.trim();
+
+                    clearTimeout(debounceTimer);
+
+                    if (query.length < 2) {
+                        searchResults.classList.add('hidden');
+                        return;
+                    }
+
+                    debounceTimer = setTimeout(() => {
+                        fetch(`{{ route('admin.search_dosen') }}?q=${encodeURIComponent(query)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                displayResults(data);
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
+                    }, 300);
+                });
+
+                function displayResults(dosens) {
+                    if (dosens.length === 0) {
+                        searchResults.innerHTML =
+                            '<div class="p-3 text-sm text-slate-500 text-center">Tidak ada dosen ditemukan</div>';
+                        searchResults.classList.remove('hidden');
+                        return;
+                    }
+
+                    const html = dosens.map(dosen => `
+                        <div class="p-3 hover:bg-slate-50 cursor-pointer border-b last:border-b-0" onclick="selectDosen(${dosen.id}, '${dosen.name.replace(/'/g, "\\'")}', '${dosen.nidn || ''}', '${dosen.program_studi || ''}')">
+                            <div class="font-bold text-sm text-slate-800">${dosen.name}</div>
+                            <div class="text-xs text-slate-500">NIDN: ${dosen.nidn || '-'} • ${dosen.program_studi || '-'}</div>
+                        </div>
+                    `).join('');
+
+                    searchResults.innerHTML = html;
+                    searchResults.classList.remove('hidden');
+                }
+
+                function selectDosen(id, name, nidn, prodi) {
+                    selectedReviewerId.value = id;
+                    selectedDosenName.textContent = name;
+                    selectedDosenInfo.textContent = `NIDN: ${nidn || '-'} • ${prodi || '-'}`;
+                    selectedDosen.classList.remove('hidden');
+                    searchResults.classList.add('hidden');
+                    searchInput.value = '';
+                    assignButton.disabled = false;
+                }
+
+                function clearSelection() {
+                    selectedReviewerId.value = '';
+                    selectedDosen.classList.add('hidden');
+                    assignButton.disabled = true;
+                }
+
+                // Close search results when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                        searchResults.classList.add('hidden');
+                    }
+                });
+            </script>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <h2 class="font-bold text-slate-800 mb-4">Hasil Review</h2>
+                @if ($proposal->reviewers->count() > 0)
+                    <div class="space-y-4">
+                        @foreach ($proposal->reviewers as $reviewer)
+                            <div class="p-4 border rounded-xl bg-slate-50">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <p class="font-bold text-slate-800">{{ $reviewer->name }}</p>
+                                        <p class="text-xs text-slate-500">{{ $reviewer->nidn ?? 'Reviewer' }}</p>
+                                    </div>
+                                    @if (($reviewer->pivot->status ?? 'pending') == 'reviewed')
+                                        <span class="px-2 py-1 bg-green-100 text-green-700 text-[10px] font-bold rounded">Selesai</span>
+                                    @else
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-[10px] font-bold rounded">Menunggu</span>
+                                    @endif
+                                </div>
+                                
+                                @if (($reviewer->pivot->status ?? 'pending') == 'reviewed')
+                                    <div class="mt-3 pt-3 border-t border-slate-200">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-xs font-semibold text-slate-500 uppercase">Nilai</span>
+                                            <span class="font-bold text-slate-800">{{ $reviewer->pivot->score ?? '-' }}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-xs font-semibold text-slate-500 uppercase block mb-1">Komentar</span>
+                                            <p class="text-sm text-slate-700 bg-white p-2 rounded border border-slate-200">
+                                                {{ $reviewer->pivot->comments ?? 'Tidak ada komentar' }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                @else
+                                    <p class="text-xs text-slate-400 italic mt-2">Belum memberikan review</p>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-sm text-slate-500 text-center py-4">Belum ada reviewer ditugaskan.</p>
+                @endif
             </div>
 
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">

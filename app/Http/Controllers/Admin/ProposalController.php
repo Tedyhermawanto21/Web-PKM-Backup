@@ -81,11 +81,7 @@ class ProposalController extends Controller
             }
         }
 
-        $availableReviewers = \App\Models\User::whereHas('role', function ($q) {
-            $q->where('name', 'reviewer');
-        })->get();
-
-        return view('dashboard.admin.proposals.show', compact('proposal', 'availableReviewers'));
+        return view('dashboard.admin.proposals.show', compact('proposal'));
     }
 
     public function approve(Request $request, Proposal $proposal)
@@ -179,16 +175,25 @@ class ProposalController extends Controller
             return back()->with('error', 'Reviewer tidak ditemukan.');
         }
 
-        // Ensure role exists and is reviewer
-        if (!$reviewer->role || $reviewer->role->name !== 'reviewer') {
-            return back()->with('error', 'Pengguna yang dipilih bukan reviewer.');
+        // Allow both reviewer and dosen roles to be assigned as reviewers
+        if (!$reviewer->role || !in_array($reviewer->role->name, ['reviewer', 'dosen'])) {
+            return back()->with('error', 'Pengguna yang dipilih bukan reviewer atau dosen.');
+        }
+
+        // Check if already assigned
+        $existingAssignment = \App\Models\ProposalReviewer::where([
+            'proposal_id' => $proposal->id,
+            'reviewer_id' => $reviewer->id,
+        ])->first();
+
+        if ($existingAssignment) {
+            return back()->with('error', 'Dosen/Reviewer ini sudah ditugaskan pada proposal ini.');
         }
 
         // Ensure pivot row exists and set initial status using the ProposalReviewer model
-        \App\Models\ProposalReviewer::updateOrCreate([
+        \App\Models\ProposalReviewer::create([
             'proposal_id' => $proposal->id,
             'reviewer_id' => $reviewer->id,
-        ], [
             'status' => 'pending',
             'score' => null,
             'comments' => null,
@@ -214,5 +219,42 @@ class ProposalController extends Controller
         $proposal->reviewers()->detach($request->reviewer_id);
 
         return back()->with('success', 'Reviewer dihapus dari penugasan.');
+    }
+
+    public function searchDosen(Request $request)
+    {
+        $query = $request->get('q', '');
+        
+        if (strlen($query) < 2) {
+            return response()->json([]);
+        }
+
+        $dosens = User::whereHas('role', function ($q) {
+                $q->where('name', 'dosen');
+            })
+            ->where(function ($q) use ($query) {
+                $q->where('name', 'LIKE', '%' . $query . '%')
+                  ->orWhere('program_studi', 'LIKE', '%' . $query . '%')
+                  ->orWhereHas('nomorInduk', function ($sq) use ($query) {
+                      $sq->where('value', 'LIKE', '%' . $query . '%')
+                         ->where('type', 'nidn');
+                  });
+            })
+            ->with('nomorInduk') // Eager load for performance
+            ->limit(10)
+            ->get();
+
+        // Transform to include accessor data explicitly
+        $results = $dosens->map(function ($dosen) {
+            return [
+                'id' => $dosen->id,
+                'name' => $dosen->name,
+                'nidn' => $dosen->nidn, // Uses accessor
+                'program_studi' => $dosen->program_studi,
+                'email' => $dosen->email,
+            ];
+        });
+
+        return response()->json($results);
     }
 }

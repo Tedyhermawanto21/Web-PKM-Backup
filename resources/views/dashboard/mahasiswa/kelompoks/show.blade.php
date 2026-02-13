@@ -3,202 +3,148 @@
 @section('title', 'Detail Kelompok PKM')
 
 @section('content')
-    <!-- Page Heading -->
-    <div class="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
+    <div class="flex justify-between items-center mb-6">
         <div>
             <h1 class="text-2xl font-bold text-slate-800">Detail Kelompok PKM</h1>
-            <p class="text-slate-500">Informasi lengkap tentang kelompok PKM Anda.</p>
+            <p class="text-slate-500 text-sm">Informasi lengkap tentang kelompok PKM Anda.</p>
         </div>
         <a href="{{ route('mahasiswa.kelompoks.index') }}"
-            class="inline-flex items-center px-4 py-2 bg-white text-slate-700 text-sm font-bold rounded-xl border border-slate-200 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md">
-            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Kembali ke Daftar
+            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors">
+            ← Kembali ke Daftar
         </a>
     </div>
 
-    <!-- Status Badge Card -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 text-center mb-8">
-        <h4 class="text-lg font-bold text-slate-900 mb-6">Status Kelompok</h4>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
 
-        <div class="inline-flex flex-col items-center">
-            <span
-                class="inline-flex items-center px-6 py-3 rounded-full text-lg font-bold bg-green-100 text-green-700 mb-4">
-                <svg class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Aktif
-            </span>
-            <p class="text-green-600 font-bold">Kelompok PKM Anda aktif dan siap untuk proses pembimbingan</p>
-        </div>
-    </div>
+            <!-- Informasi Kelompok -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-blue-50 rounded-lg">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h2 class="font-bold text-slate-800">Informasi Kelompok</h2>
+                </div>
 
-    <!-- Details Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <!-- Informasi Kelompok -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden h-full">
-            <div class="bg-uhamka-900 px-6 py-4 border-b border-uhamka-800">
-                <h6 class="font-bold text-white flex items-center">
-                    <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                    Informasi Kelompok
-                </h6>
-            </div>
-            <div class="p-6">
-                <div class="space-y-4">
-                    <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
-                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Nama Kelompok</span>
-                        <p class="text-slate-800 font-semibold">{{ $kelompok->nama_kelompok }}</p>
+                <h3 class="text-xl font-bold text-slate-900 mb-1">
+                    {{ $kelompok->judul_pkm }}</h3>
+                <p class="text-slate-500 mb-6">{{ $kelompok->nama_kelompok }}</p>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <p class="text-xs text-slate-500 uppercase font-semibold">Skema PKM</p>
+                        <p class="font-bold text-blue-600">{{ $kelompok->jenis_pkm }}</p>
                     </div>
-                    <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
-                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Judul PKM</span>
-                        <p class="text-slate-800 font-semibold leading-relaxed">{{ $kelompok->judul_pkm }}</p>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <p class="text-xs text-slate-500 uppercase font-semibold">Dosen Pembimbing</p>
+                        <p class="font-bold text-slate-700">{{ $kelompok->dosenPembimbing->name ?? 'Belum Ditentukan' }}</p>
                     </div>
-                    @if ($kelompok->jenis_pkm)
-                        <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
-                            <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Skema</span>
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                {{ $kelompok->jenis_pkm }}
-                            </span>
-                        </div>
-                    @endif
-                    <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
-                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Dosen Pembimbing</span>
-                        @if ($kelompok->dosenPembimbing)
-                            <div class="flex items-center gap-3 mt-1">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-sm font-bold text-slate-600">
-                                    {{ substr($kelompok->dosenPembimbing->name, 0, 1) }}
-                                </div>
-                                <div>
-                                    <p class="text-slate-900 font-bold">{{ $kelompok->dosenPembimbing->name }}</p>
-                                    <p class="text-xs text-slate-500">
-                                        {{ $kelompok->dosenPembimbing->program_studi ?? 'Teknik Informatika' }}</p>
-                                </div>
-                            </div>
-                        @else
-                            <p class="text-slate-500 italic">Belum ditentukan</p>
-                        @endif
-                    </div>
-                    <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
-                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Status</span>
-                        <span
-                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                            {{ ucfirst($kelompok->status) }}
-                        </span>
-                    </div>
-                    @if ($kelompok->deskripsi)
-                        <div class="pb-4 border-b border-slate-50 last:border-0 last:pb-0">
-                            <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Deskripsi</span>
-                            <p class="text-slate-800 leading-relaxed">{{ $kelompok->deskripsi }}</p>
-                        </div>
+                </div>
+
+                <div class="border-t pt-6">
+                    <p class="text-xs text-slate-500 uppercase font-semibold mb-3">File Proposal</p>
+                    @if ($kelompok->file_proposal)
+                        <a href="{{ Storage::url($kelompok->file_proposal) }}" target="_blank"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-lg font-semibold text-sm border border-green-200 hover:bg-green-100 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            Download File
+                        </a>
+                    @else
+                        <p class="text-sm text-slate-400">Tidak ada file proposal</p>
                     @endif
                 </div>
+                
+                @if($kelompok->deskripsi)
+                <div class="border-t pt-6 mt-6">
+                     <p class="text-xs text-slate-500 uppercase font-semibold mb-3">Deskripsi</p>
+                     <p class="text-slate-700 leading-relaxed">{{ $kelompok->deskripsi }}</p>
+                </div>
+                @endif
             </div>
-        </div>
 
-        <!-- Daftar Anggota -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden h-full">
-            <div class="bg-uhamka-900 px-6 py-4 border-b border-uhamka-800">
-                <h6 class="font-bold text-white flex items-center">
-                    <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                    Anggota Kelompok
-                    @php
-                        $totalAnggota = 1; // ketua
-                        $totalAnggota += $kelompok->anggota ? $kelompok->anggota->count() : 0;
-                        $freeMembers = \App\Models\KelompokAnggota::where('kelompok_id', $kelompok->id)->count();
-                        $totalAnggota += $freeMembers;
-                    @endphp
-                    <span class="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-xs">{{ $totalAnggota }} Orang</span>
-                </h6>
-            </div>
-            <div class="p-6">
-                <div class="space-y-4">
-                    <!-- Ketua -->
-                    @if ($kelompok->ketua)
-                        <div
-                            class="flex items-center p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+            <!-- Anggota Kelompok -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-purple-50 rounded-lg">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h2 class="font-bold text-slate-800">Anggota Kelompok</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @foreach ($kelompok->anggota as $mhs)
+                        <div class="flex items-center p-4 border border-slate-100 rounded-xl bg-slate-50/50 relative">
+                            @if ($mhs->posisi == 'ketua')
+                                <span
+                                    class="absolute top-2 right-2 px-2 py-0.5 bg-blue-600 text-[10px] text-white font-bold rounded">KETUA</span>
+                            @endif
                             <div
-                                class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold mr-4">
-                                1
+                                class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold mr-4">
+                                {{ substr($mhs->nama ?? $mhs->name ?? '?', 0, 1) }}
                             </div>
                             <div>
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span
-                                        class="px-2 py-0.5 bg-uhamka-100 text-uhamka-700 text-[10px] font-bold uppercase rounded-md">Ketua</span>
-                                    <h6 class="font-bold text-slate-900">{{ $kelompok->ketua->name }}</h6>
-                                </div>
-                                <p class="text-xs text-slate-500">{{ $kelompok->ketua->nim ?? '-' }} •
-                                    {{ $kelompok->ketua->program_studi ?? 'Teknik Informatika' }}</p>
+                                <p class="font-bold text-slate-800 text-sm leading-tight">{{ $mhs->nama ?? $mhs->name }}</p>
+                                <p class="text-xs text-slate-500">{{ $mhs->nim ?? '' }} • {{ $mhs->program_studi ?? '' }}
+                                </p>
                             </div>
                         </div>
-                    @endif
-
-                    @php $memberIndex = 2; @endphp
-
-                    <!-- Anggota dari relasi User -->
-                    @if ($kelompok->anggota && $kelompok->anggota->count() > 0)
-                        @foreach ($kelompok->anggota as $anggota)
-                            <div
-                                class="flex items-center p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold mr-4">
-                                    {{ $memberIndex }}
-                                </div>
-                                <div>
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <span
-                                            class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold uppercase rounded-md">Anggota</span>
-                                        <h6 class="font-bold text-slate-900">{{ $anggota->name }}</h6>
-                                    </div>
-                                    <p class="text-xs text-slate-500">{{ $anggota->nim ?? '-' }} •
-                                        {{ $anggota->program_studi ?? 'Teknik Informatika' }}</p>
-                                </div>
-                            </div>
-                            @php $memberIndex++; @endphp
-                        @endforeach
-                    @endif
-
-                    <!-- Anggota dari tabel KelompokAnggota -->
-                    @php
-                        $freeMembers = \App\Models\KelompokAnggota::where('kelompok_id', $kelompok->id)->get();
-                    @endphp
-                    @foreach ($freeMembers as $freeMember)
-                        <div
-                            class="flex items-center p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                            <div
-                                class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold mr-4">
-                                {{ $memberIndex }}
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span
-                                        class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold uppercase rounded-md">Anggota</span>
-                                    <h6 class="font-bold text-slate-900">{{ $freeMember->nama }}</h6>
-                                </div>
-                                <p class="text-xs text-slate-500">{{ $freeMember->nim }} •
-                                    {{ $freeMember->program_studi }}</p>
-                            </div>
-                        </div>
-                        @php $memberIndex++; @endphp
                     @endforeach
-
-                    @if ($totalAnggota == 1)
-                        <div class="text-center py-4 text-slate-500">
-                            <p class="text-sm">Tidak ada anggota lain selain ketua.</p>
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>
-    </div>
 
+        <div class="space-y-6">
+            <!-- Status Verifikasi -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <h2 class="font-bold text-slate-800 mb-4">Status Verifikasi</h2>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center p-3 border rounded-xl">
+                        <span class="text-sm text-slate-600">Dosen Pembimbing</span>
+                        <span
+                            class="px-2 py-1 {{ $kelompok->status_dosen == 'disetujui' ? 'bg-green-100 text-green-700' : ($kelompok->status_dosen == 'ditolak' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }} text-[10px] font-bold rounded capitalize">{{ $kelompok->status_dosen ?? 'menunggu' }}</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 border rounded-xl">
+                        <span class="text-sm text-slate-600">Kaprodi</span>
+                        <span
+                            class="px-2 py-1 {{ $kelompok->status_kaprodi == 'disetujui' ? 'bg-green-100 text-green-700' : ($kelompok->status_kaprodi == 'ditolak' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }} text-[10px] font-bold rounded capitalize">{{ $kelompok->status_kaprodi ?? 'menunggu' }}</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 border rounded-xl">
+                        <span class="text-sm text-slate-600">Admin</span>
+                        <span
+                            class="px-2 py-1 {{ $kelompok->status_admin == 'disetujui' ? 'bg-green-100 text-green-700' : ($kelompok->status_admin == 'ditolak' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }} text-[10px] font-bold rounded capitalize">{{ $kelompok->status_admin ?? 'menunggu' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tindakan (Opsional, jika ada) -->
+            <!-- Jika ingin menambahkan tombol edit/hapus untuk kelompok di sini -->
+             @if (in_array($kelompok->status, ['draft', 'ditolak']) && Auth::id() === $kelompok->ketua_id)
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                    <h2 class="font-bold text-slate-800 mb-4">Tindakan</h2>
+                    <div class="space-y-3">
+                         <!-- Note: Adjust routes if needed, usually managed via Proposal for editing -->
+                         <a href="{{ route('mahasiswa.pengajuan_kelompok_pkm.edit', $kelompok->id) }}"
+                            class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Edit Kelompok
+                        </a>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
 @endsection

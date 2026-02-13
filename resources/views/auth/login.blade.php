@@ -78,8 +78,15 @@
                     @csrf
                     
                     <div>
-                        <label for="email" class="block text-sm font-bold text-slate-700 mb-2">Alamat Email</label>
-                        <input type="email" name="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-uhamka-700 focus:ring-4 focus:ring-uhamka-700/10 transition-all outline-none text-slate-900 placeholder-slate-400 font-medium" placeholder="nama@uhamka.ac.id">
+                    <div>
+                        <label for="nomor_induk" class="block text-sm font-bold text-slate-700 mb-2">Nomor Induk (NIM / NIDN)</label>
+                        <div class="flex gap-4">
+                            <select name="type" class="w-1/3 px-4 py-3 rounded-xl border border-slate-200 focus:border-uhamka-700 focus:ring-4 focus:ring-uhamka-700/10 transition-all outline-none text-slate-900 font-medium">
+                                <option value="nim">NIM</option>
+                                <option value="nidn">NIDN</option>
+                            </select>
+                            <input type="text" name="nomor_induk" id="nomor_induk" required class="w-2/3 px-4 py-3 rounded-xl border border-slate-200 focus:border-uhamka-700 focus:ring-4 focus:ring-uhamka-700/10 transition-all outline-none text-slate-900 placeholder-slate-400 font-medium" placeholder="Contoh: 12345678">
+                        </div>
                     </div>
 
                     <div>

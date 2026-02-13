@@ -5,6 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Dashboard') - PKM Center UHAMKA</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('favicon.svg') }}" type="image/x-icon">
+    <meta name="msapplication-TileColor" content="#FACC15">
+    <meta name="theme-color" content="#FACC15">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
@@ -110,7 +117,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    Pengajuan Proposal
+                    Pengajuan Kelompok
                     </a>
                     @if (Route::has('mahasiswa.upload.index'))
                         <a href="{{ route('mahasiswa.upload.index') }}"
@@ -175,6 +182,26 @@
                         </svg>
                         Bimbingan Mahasiswa
                     </a>
+
+                    @php
+                        $reviewerAssignments = \App\Models\ProposalReviewer::where('reviewer_id', Auth::id())->count();
+                    @endphp
+                    @if ($reviewerAssignments > 0)
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2 mt-6">Menu
+                            Reviewer</div>
+                        <a href="{{ route('dosen.reviewer.index') }}"
+                            class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('dosen.reviewer.*') ? 'sidebar-active' : '' }}">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                            </svg>
+                            Review Proposal
+                            @if ($reviewerAssignments > 0)
+                                <span
+                                    class="ml-auto px-2 py-1 bg-yellow-400 text-yellow-900 text-xs font-bold rounded-full">{{ $reviewerAssignments }}</span>
+                            @endif
+                        </a>
+                    @endif
                 @elseif(Auth::user()->isKaprodi())
                     <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">Menu Kaprodi</div>
 
@@ -182,9 +209,18 @@
                         class="flex items-center gap-3 px-3 py-3 rounded-xl text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('dashboard') ? 'sidebar-active' : '' }}">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z" />
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
                         Dashboard
+                    </a>
+
+                    <a href="{{ route('kaprodi.pengajuan_kelompok_pkm.index') }}"
+                        class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('kaprodi.pengajuan_kelompok_pkm.*') ? 'sidebar-active' : '' }}">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Daftar Proposal
                     </a>
 
                     <a href="{{ route('kaprodi.kelompok_requests.index') }}"
@@ -203,7 +239,6 @@
                         </svg>
                         Daftar Mahasiswa
                     </a>
-
                 @elseif(Auth::user()->isAdmin())
                     <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">Menu Administrator
                     </div>
@@ -212,9 +247,7 @@
                         class="flex items-center gap-3 px-3 py-3 rounded-xl text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('dashboard') ? 'sidebar-active' : '' }}">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
                         Dashboard
                     </a>
@@ -242,14 +275,52 @@
                         </svg>
                         Kelola Skema
                     </a>
-                    <a href="{{ route('admin.reviewers.index') }}"
-                        class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('admin.reviewers.*') ? 'sidebar-active' : '' }}">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        Manajemen Reviewer
-                    </a>
+                    <!-- Dropdown Manajemen Data -->
+                    <div x-data="{ open: {{ request()->routeIs('admin.dosens.*') || request()->routeIs('admin.kaprodis.*') || request()->routeIs('admin.prodis.*') ? 'true' : 'false' }} }" class="space-y-1">
+                        <button @click="open = !open" type="button"
+                            class="w-full flex items-center justify-between px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium focus:outline-none"
+                            :class="{ 'bg-white/10 text-white': open || {{ request()->routeIs('admin.dosens.*') || request()->routeIs('admin.kaprodis.*') || request()->routeIs('admin.prodis.*') ? 'true' : 'false' }} }">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+                                </svg>
+                                Manajemen Data
+                            </div>
+                            <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+
+                        <div x-show="open" 
+                             x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 -translate-y-2"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 translate-y-0"
+                            x-transition:leave-end="opacity-0 -translate-y-2" 
+                            class="pl-4 space-y-1">
+                            
+                            <div class="border-l-2 border-slate-700 pl-2 space-y-1">
+                                <a href="{{ route('admin.dosens.index') }}"
+                                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all font-medium {{ request()->routeIs('admin.dosens.*') ? 'text-white bg-uhamka-600 shadow-md' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                                    <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.dosens.*') ? 'bg-white' : 'bg-slate-500' }}"></span>
+                                    Manajemen Dosen
+                                </a>
+                                <a href="{{ route('admin.kaprodis.index') }}"
+                                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all font-medium {{ request()->routeIs('admin.kaprodis.*') ? 'text-white bg-uhamka-600 shadow-md' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                                    <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.kaprodis.*') ? 'bg-white' : 'bg-slate-500' }}"></span>
+                                    Manajemen Kaprodi
+                                </a>
+                                <a href="{{ route('admin.prodis.index') }}"
+                                    class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all font-medium {{ request()->routeIs('admin.prodis.*') ? 'text-white bg-uhamka-600 shadow-md' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                                    <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.prodis.*') ? 'bg-white' : 'bg-slate-500' }}"></span>
+                                    Manajemen Prodi
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     <a href="#"
                         class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-all font-medium {{ request()->routeIs('admin.settings.*') ? 'sidebar-active' : '' }}">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

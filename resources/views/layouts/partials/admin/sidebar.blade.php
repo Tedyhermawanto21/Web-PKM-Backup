@@ -34,11 +34,11 @@
         </a>
     </li>
 
-    <!-- Nav Item - Manajemen Reviewer -->
-    <li class="nav-item {{ request()->routeIs('admin.reviewers.*') ? 'active' : '' }}">
-        <a class="nav-link" href="{{ route('admin.reviewers.index') }}">
-            <i class="fas fa-fw fa-users"></i>
-            <span>Manajemen Reviewer</span>
+    <!-- Nav Item - Manajemen Dosen -->
+    <li class="nav-item {{ request()->routeIs('admin.dosens.*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('admin.dosens.index') }}">
+            <i class="fas fa-fw fa-chalkboard-teacher"></i>
+            <span>Manajemen Dosen</span>
         </a>
     </li>
 

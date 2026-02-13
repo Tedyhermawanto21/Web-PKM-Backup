@@ -3,262 +3,180 @@
 @section('title', 'Detail Proposal')
 
 @section('content')
-    <!-- Page Heading -->
-    <div class="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
+    <div class="flex justify-between items-center mb-6">
         <div>
             <h1 class="text-2xl font-bold text-slate-800">Detail Proposal</h1>
-            <p class="text-slate-500">Informasi lengkap tentang proposal yang diupload.</p>
+            <p class="text-slate-500 text-sm">Informasi lengkap tentang proposal yang diupload.</p>
         </div>
         <a href="{{ route('mahasiswa.upload.index') }}"
-            class="inline-flex items-center px-4 py-2 bg-white text-slate-700 text-sm font-bold rounded-xl border border-slate-200 hover:bg-slate-50 transition-all shadow-sm hover:shadow-md">
-            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Kembali
+            class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors">
+            ← Kembali ke Daftar
         </a>
     </div>
 
-    <!-- Details Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <!-- Informasi Proposal (Left - 2 cols) -->
-        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-            <div class="bg-uhamka-900 px-6 py-4 border-b border-uhamka-800">
-                <h6 class="font-bold text-white flex items-center">
-                    <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Informasi Proposal
-                </h6>
-            </div>
-            <div class="p-6">
-                <div class="space-y-4">
-                    <div class="pb-4 border-b border-slate-50">
-                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Nama Kelompok</span>
-                        <p class="text-slate-800 font-semibold">{{ $proposal->nama_kelompok }}</p>
-                    </div>
-                    <div class="pb-4 border-b border-slate-50">
-                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Judul PKM</span>
-                        <p class="text-slate-800 font-semibold leading-relaxed">{{ $proposal->judul_kelompok }}</p>
-                    </div>
-                    <div class="pb-4 border-b border-slate-50">
-                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Skema</span>
-                        <span
-                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-uhamka-100 text-uhamka-700">
-                            {{ $proposal->skema }}
-                        </span>
-                    </div>
-                    <div class="pb-4 border-b border-slate-50">
-                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Ketua</span>
-                        <p class="text-slate-800 font-semibold">{{ $proposal->ketua->name }}</p>
-                    </div>
-                    <div class="pb-4 border-b border-slate-50">
-                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Dosen Pembimbing</span>
-                        @if ($proposal->dosenPembimbing)
-                            <div class="flex items-center gap-3 mt-1">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-sm font-bold text-slate-600">
-                                    {{ substr($proposal->dosenPembimbing->name, 0, 1) }}
-                                </div>
-                                <div>
-                                    <p class="text-slate-900 font-bold">{{ $proposal->dosenPembimbing->name }}</p>
-                                    <p class="text-xs text-slate-500">
-                                        {{ $proposal->dosenPembimbing->program_studi ?? 'Teknik Informatika' }}</p>
-                                </div>
-                            </div>
-                        @else
-                            <p class="text-slate-500 italic">Belum ditentukan</p>
-                        @endif
-                    </div>
-                    <div class="pb-4 border-b border-slate-50">
-                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Status Dosen</span>
-                        @if ($proposal->status_dosen == 'menunggu')
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">Menunggu</span>
-                        @elseif($proposal->status_dosen == 'disetujui')
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">Disetujui</span>
-                        @else
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">Ditolak</span>
-                        @endif
-                    </div>
-                    <div>
-                        <span class="text-xs font-bold text-slate-400 uppercase block mb-1">Status Kaprodi</span>
-                        @if ($proposal->status_kaprodi == 'menunggu')
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">Menunggu</span>
-                        @elseif($proposal->status_kaprodi == 'disetujui')
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">Disetujui</span>
-                        @else
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700">Ditolak</span>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 space-y-6">
 
-        <!-- Status Upload (Right - 1 col) -->
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden h-fit">
-            <div class="bg-uhamka-900 px-6 py-4 border-b border-uhamka-800">
-                <h6 class="font-bold text-white flex items-center">
-                    <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Status Upload
-                </h6>
-            </div>
-            <div class="p-6">
-                <div class="text-center mb-4">
-                    @if ($proposal->status_admin == 'pending')
-                        <div
-                            class="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-3">
-                            <svg class="w-8 h-8 text-yellow-500" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <h5 class="font-bold text-yellow-700">Menunggu Review</h5>
-                    @elseif($proposal->status_admin == 'disetujui')
-                        <div
-                            class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-3">
-                            <svg class="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <h5 class="font-bold text-green-700">Disetujui</h5>
-                    @elseif($proposal->status_admin == 'ditolak')
-                        <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-3">
-                            <svg class="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <h5 class="font-bold text-red-700">
-                            @if ($proposal->revision_stage > 0)
-                                Perlu Revisi Tahap {{ $proposal->revision_stage }}
-                            @else
-                                Ditolak
-                            @endif
-                        </h5>
-                    @endif
-                </div>
-
-                @if ($proposal->revision_stage > 0)
-                    <div class="mb-4 p-3 rounded-xl bg-yellow-50 border border-yellow-200">
-                        <p class="text-sm text-yellow-700 font-medium">
-                            <span class="font-bold">Status Revisi:</span> Proposal Anda memerlukan revisi tahap
-                            {{ $proposal->revision_stage }}.
-                        </p>
-                    </div>
-                @endif
-
-                @if ($proposal->catatan_admin)
-                    <div class="mb-4 p-3 rounded-xl bg-blue-50 border border-blue-200">
-                        <p class="text-xs font-bold text-blue-700 uppercase mb-1">Catatan Admin:</p>
-                        <p class="text-sm text-blue-800">{{ $proposal->catatan_admin }}</p>
-                    </div>
-                @endif
-
-                @if ($proposal->file_proposal)
-                    <a href="{{ route('mahasiswa.upload.download', $proposal->id) }}"
-                        class="w-full inline-flex items-center justify-center px-4 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all mb-2">
-                        <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <!-- Informasi Proposal -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-blue-50 rounded-lg">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
                         </svg>
-                        Download File
-                    </a>
-                @endif
+                    </div>
+                    <h2 class="font-bold text-slate-800">Informasi Proposal</h2>
+                </div>
 
-                @if ($proposal->status_admin == 'ditolak' || $proposal->revision_stage > 0)
-                    @php
-                        $canEdit = true;
-                        if ($proposal->revision_stage > 0) {
-                            $revisionType = 'revisi_' . $proposal->revision_stage;
-                            $revisionSchedule = \App\Models\Schedule::ofType($revisionType)
-                                ->active()
-                                ->ongoing()
-                                ->first();
-                            $canEdit = $revisionSchedule != null;
-                        }
-                    @endphp
-                    @if ($canEdit)
-                        <a href="{{ route('mahasiswa.upload.edit', $proposal->id) }}"
-                            class="w-full inline-flex items-center justify-center px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all">
-                            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <h3 class="text-xl font-bold text-slate-900 mb-1">
+                    {{ $proposal->judul_kelompok }}</h3>
+                <p class="text-slate-500 mb-6">{{ $proposal->nama_kelompok }}</p>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <p class="text-xs text-slate-500 uppercase font-semibold">Skema PKM</p>
+                        <p class="font-bold text-blue-600">{{ $proposal->skema }}</p>
+                    </div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <p class="text-xs text-slate-500 uppercase font-semibold">Dosen Pembimbing</p>
+                        <p class="font-bold text-slate-700">{{ $proposal->dosenPembimbing->name ?? 'Belum Ditentukan' }}</p>
+                    </div>
+                </div>
+
+                <div class="border-t pt-6">
+                    <p class="text-xs text-slate-500 uppercase font-semibold mb-3">File Proposal</p>
+                    @if ($proposal->file_proposal)
+                        <a href="{{ route('mahasiswa.upload.download', $proposal->id) }}"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-lg font-semibold text-sm border border-green-200 hover:bg-green-100 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                             </svg>
-                            Upload Ulang File
+                            Download File
                         </a>
                     @else
-                        <button
-                            class="w-full inline-flex items-center justify-center px-4 py-3 bg-slate-200 text-slate-400 font-bold rounded-xl cursor-not-allowed"
-                            disabled>
-                            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                            Jadwal Revisi Belum Dibuka
-                        </button>
+                        <p class="text-sm text-slate-400">Tidak ada file proposal</p>
                     @endif
+                </div>
+
+                @if ($proposal->catatan_admin)
+                    <div class="border-t pt-6 mt-6">
+                        <div class="p-3 rounded-xl bg-blue-50 border border-blue-200">
+                            <p class="text-xs font-bold text-blue-700 uppercase mb-1">Catatan Admin:</p>
+                            <p class="text-sm text-blue-800">{{ $proposal->catatan_admin }}</p>
+                        </div>
+                    </div>
                 @endif
             </div>
-        </div>
-    </div>
 
-    <!-- Anggota Kelompok -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-8">
-        <div class="bg-uhamka-900 px-6 py-4 border-b border-uhamka-800">
-            <h6 class="font-bold text-white flex items-center">
-                <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                Anggota Kelompok
-                <span class="ml-2 px-2 py-0.5 bg-white/20 rounded-full text-xs">{{ count($proposal->anggota) }}
-                    Orang</span>
-            </h6>
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-600">
-                <thead class="bg-slate-50 text-slate-900 font-bold uppercase text-xs tracking-wider">
-                    <tr>
-                        <th class="px-6 py-4">No</th>
-                        <th class="px-6 py-4">Nama</th>
-                        <th class="px-6 py-4">NIM</th>
-                        <th class="px-6 py-4">Program Studi</th>
-                        <th class="px-6 py-4 text-center">Posisi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                    @foreach ($proposal->anggota as $index => $anggota)
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4 font-medium">{{ $index + 1 }}</td>
-                            <td class="px-6 py-4 font-bold text-slate-800">{{ $anggota->nama }}</td>
-                            <td class="px-6 py-4">{{ $anggota->nim }}</td>
-                            <td class="px-6 py-4">{{ $anggota->program_studi }}</td>
-                            <td class="px-6 py-4 text-center">
-                                @if ($anggota->posisi == 'ketua')
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-uhamka-100 text-uhamka-700">Ketua</span>
-                                @else
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-500">Anggota</span>
-                                @endif
-                            </td>
-                        </tr>
+            <!-- Anggota Kelompok -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-purple-50 rounded-lg">
+                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h2 class="font-bold text-slate-800">Anggota Kelompok</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    @foreach ($proposal->anggota as $mhs)
+                        <div class="flex items-center p-4 border border-slate-100 rounded-xl bg-slate-50/50 relative">
+                            @if ($mhs->posisi == 'ketua')
+                                <span
+                                    class="absolute top-2 right-2 px-2 py-0.5 bg-blue-600 text-[10px] text-white font-bold rounded">KETUA</span>
+                            @endif
+                            <div
+                                class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold mr-4">
+                                {{ substr($mhs->nama ?? $mhs->name ?? '?', 0, 1) }}
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm leading-tight">{{ $mhs->nama ?? $mhs->name }}</p>
+                                <p class="text-xs text-slate-500">{{ $mhs->nim ?? '' }} • {{ $mhs->program_studi ?? '' }}
+                                </p>
+                            </div>
+                        </div>
                     @endforeach
-                </tbody>
-            </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <!-- Status Verifikasi -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                <h2 class="font-bold text-slate-800 mb-4">Status Verifikasi</h2>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center p-3 border rounded-xl">
+                        <span class="text-sm text-slate-600">Dosen Pembimbing</span>
+                        <span
+                            class="px-2 py-1 {{ $proposal->status_dosen == 'disetujui' ? 'bg-green-100 text-green-700' : ($proposal->status_dosen == 'ditolak' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }} text-[10px] font-bold rounded capitalize">{{ $proposal->status_dosen ?? 'menunggu' }}</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 border rounded-xl">
+                        <span class="text-sm text-slate-600">Kaprodi</span>
+                        <span
+                            class="px-2 py-1 {{ $proposal->status_kaprodi == 'disetujui' ? 'bg-green-100 text-green-700' : ($proposal->status_kaprodi == 'ditolak' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700') }} text-[10px] font-bold rounded capitalize">{{ $proposal->status_kaprodi ?? 'menunggu' }}</span>
+                    </div>
+                    <div class="flex justify-between items-center p-3 border rounded-xl">
+                        <span class="text-sm text-slate-600">Admin</span>
+                        <span
+                            class="px-2 py-1 {{ $proposal->status_admin == 'disetujui' ? 'bg-green-100 text-green-700' : ($proposal->status_admin == 'ditolak' ? 'bg-red-100 text-red-700' : ($proposal->status_admin == 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-yellow-100 text-yellow-700')) }} text-[10px] font-bold rounded capitalize">{{ $proposal->status_admin == 'pending' ? 'Menunggu' : $proposal->status_admin }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tindakan (Upload Ulang / Revisi) -->
+            @if ($proposal->status_admin == 'ditolak' || $proposal->revision_stage > 0)
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+                    <h2 class="font-bold text-slate-800 mb-4">Tindakan</h2>
+                    <div class="space-y-3">
+                        @if ($proposal->revision_stage > 0)
+                         <div class="mb-3 p-3 rounded-xl bg-yellow-50 border border-yellow-200">
+                            <p class="text-xs text-yellow-700 font-medium">
+                                <span class="font-bold">Status Revisi:</span> Perlu revisi tahap {{ $proposal->revision_stage }}.
+                            </p>
+                        </div>
+                        @endif
+
+                        @php
+                            $canEdit = true;
+                            if ($proposal->revision_stage > 0) {
+                                $revisionType = 'revisi_' . $proposal->revision_stage;
+                                $revisionSchedule = \App\Models\Schedule::ofType($revisionType)
+                                    ->active()
+                                    ->ongoing()
+                                    ->first();
+                                $canEdit = $revisionSchedule != null;
+                            }
+                        @endphp
+                        
+                        @if ($canEdit)
+                            <a href="{{ route('mahasiswa.upload.edit', $proposal->id) }}"
+                                class="w-full py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Upload Ulang / Revisi
+                            </a>
+                        @else
+                            <button
+                                class="w-full py-2.5 bg-slate-200 text-slate-400 font-bold rounded-xl cursor-not-allowed flex items-center justify-center gap-2"
+                                disabled>
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                                Jadwal Revisi Tutup
+                            </button>
+                        @endif
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 @endsection

@@ -48,6 +48,21 @@ class KelompokController extends Controller
         $isMember = $kelompok->ketua_id === $user->id || $kelompok->anggota()->where('user_id', $user->id)->exists();
         if (! $isMember) abort(403);
 
+        // Find related Proposal to get status_admin and other fields
+        $relatedProposal = \App\Models\Proposal::where('ketua_id', $kelompok->ketua_id)
+            ->where('nama_kelompok', $kelompok->nama_kelompok)
+            ->first();
+            
+        // Map compatible attributes
+        $kelompok->status_dosen = $kelompok->status === 'approved' ? 'disetujui' : ($kelompok->status === 'rejected' ? 'ditolak' : 'menunggu');
+        $kelompok->status_kaprodi = $kelompok->status_kaprodi ?? 'menunggu';
+        $kelompok->status_admin = $relatedProposal ? $relatedProposal->status_admin : 'menunggu';
+        $kelompok->skema = $kelompok->jenis_pkm;
+
+        // Use helper to get unified anggota list
+        // This ensures consistent member display
+        $kelompok->anggota = $kelompok->getAllAnggota();
+
         return view('dashboard.mahasiswa.kelompoks.show', compact('kelompok'));
     }
 }
