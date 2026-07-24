@@ -1,0 +1,14 @@
+Email: pkmcenter@uhamka.ac.id | NIM/NIDN: KOSONG | Role: admin 
+Email: dekan@ft.ac.id | NIM/NIDN: KOSONG | Role: dekan 
+Email: kaprodi.ti@ft.ac.id | NIM/NIDN: KOSONG | Role: kaprodi 
+Email: kaprodi.si@ft.ac.id | NIM/NIDN: KOSONG | Role: kaprodi 
+Email: rina.wati@ft.ac.id | NIM/NIDN: KOSONG | Role: dosen 
+Email: rizki.pratama@ft.ac.id | NIM/NIDN: KOSONG | Role: dosen 
+Email: fitri.handayani@ft.ac.id | NIM/NIDN: KOSONG | Role: dosen 
+Email: agus.setiawan@ft.ac.id | NIM/NIDN: KOSONG | Role: dosen 
+Email: andi.wijaya@student.ac.id | NIM/NIDN: KOSONG | Role: mahasiswa 
+Email: dewi.lestari@student.ac.id | NIM/NIDN: KOSONG | Role: mahasiswa 
+Email: raka.permana@student.ac.id | NIM/NIDN: KOSONG | Role: mahasiswa 
+Email: maya.sari@student.ac.id | NIM/NIDN: KOSONG | Role: mahasiswa 
+Email: faisal.rahman@student.ac.id | NIM/NIDN: KOSONG | Role: mahasiswa 
+Email: sinta.maharani@student.ac.id | NIM/NIDN: KOSONG | Role: mahasiswa 

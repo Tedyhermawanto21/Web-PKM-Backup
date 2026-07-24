@@ -39,6 +39,45 @@
             <form action="{{ route('mahasiswa.pengajuan_kelompok_pkm.store') }}" method="POST">
                 @csrf
 
+                <!-- AI Assistant Section -->
+                <div class="mb-10 bg-gradient-to-br from-indigo-50 to-blue-50 p-6 rounded-2xl border border-indigo-100 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <svg class="w-32 h-32 text-indigo-500" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                        </svg>
+                    </div>
+                    
+                    <h5 class="text-lg font-bold text-indigo-900 mb-2 flex items-center relative z-10">
+                        <svg class="w-6 h-6 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        Pemandu AI (AI Assistant)
+                    </h5>
+                    <p class="text-sm text-indigo-700 mb-4 relative z-10">Bingung menentukan judul, skema, atau dosen pembimbing? Ceritakan ide Anda secara bebas di bawah ini, dan AI kami akan meracikkannya untuk Anda!</p>
+                    
+                    <div class="relative z-10">
+                        <textarea id="ai_ide_kasar" rows="3" class="w-full rounded-xl border-indigo-200 bg-white text-slate-800 placeholder-slate-400 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all duration-200 py-3 px-4 shadow-sm" placeholder="Contoh: Saya ingin membuat tempat sampah pintar menggunakan sensor yang bisa memilah sampah organik dan anorganik untuk mempermudah daur ulang..."></textarea>
+                        
+                        <button type="button" id="btn_generate_ai" class="mt-3 inline-flex items-center px-5 py-2.5 bg-indigo-600 text-white text-sm font-bold rounded-xl shadow-md hover:bg-indigo-700 hover:shadow-lg transition-all active:scale-95">
+                            <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                            Dapatkan Rekomendasi AI
+                        </button>
+                    </div>
+
+                    <!-- Loading Indicator -->
+                    <div id="ai_loading" class="hidden mt-6 text-center py-4 relative z-10">
+                        <div class="inline-block animate-spin w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full mb-2"></div>
+                        <p class="text-indigo-800 font-medium text-sm animate-pulse">AI sedang meracik ide Anda (ini mungkin memakan waktu beberapa detik)...</p>
+                    </div>
+
+                    <!-- Results Container -->
+                    <div id="ai_results" class="hidden mt-6 grid grid-cols-1 lg:grid-cols-3 gap-4 relative z-10">
+                        <!-- Items injected via JS -->
+                    </div>
+                </div>
+
                 <!-- Informasi Kelompok -->
                 <div class="mb-10">
                     <h5 class="text-lg font-bold text-uhamka-900 border-b border-slate-100 pb-3 mb-8 flex items-center">
@@ -306,6 +345,112 @@
                 $(this).closest('.anggota-card').fadeOut(300, function() {
                     $(this).remove();
                 });
+            });
+
+            // Handle AI Generation
+            $('#btn_generate_ai').click(function() {
+                let ideKasar = $('#ai_ide_kasar').val().trim();
+                if(ideKasar.length < 10) {
+                    alert('Tolong ceritakan ide Anda dengan lebih detail (minimal 10 karakter).');
+                    return;
+                }
+
+                let $btn = $(this);
+                let $loading = $('#ai_loading');
+                let $results = $('#ai_results');
+
+                $btn.prop('disabled', true).addClass('opacity-50 cursor-not-allowed');
+                $results.hide().empty();
+                $loading.removeClass('hidden');
+
+                $.ajax({
+                    url: '{{ route("mahasiswa.pkm_ai.generate") }}',
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        ide_proposal: ideKasar
+                    },
+                    success: function(res) {
+                        $loading.addClass('hidden');
+                        $btn.prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
+
+                        const packages = Array.isArray(res.data) ? res.data : (res.data.packages || []);
+
+                        if(res.status === 'success' && packages.length > 0) {
+                            packages.forEach(function(item, index) {
+                                // Default placeholders if AI didn't find specific ones
+                                let schemaName = item.skema ? item.skema.split(' ')[0] : ''; 
+                                let dosenId = item.dosen ? item.dosen.id : '';
+                                let dosenName = item.dosen ? item.dosen.name : 'Dosen Umum';
+                                let dosenMatch = item.dosen ? item.dosen.match_score : 0;
+                                
+                                let cardHtml = `
+                                <div class="bg-white rounded-xl p-5 border border-indigo-100 shadow-sm hover:shadow-md transition-shadow relative">
+                                    <div class="absolute top-0 right-0 bg-indigo-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg rounded-tr-xl">
+                                        Opsi ${index + 1}
+                                    </div>
+                                    <div class="mb-3 mt-2">
+                                        <p class="text-xs text-slate-500 font-bold uppercase mb-1">Usulan Judul:</p>
+                                        <p class="text-sm font-semibold text-slate-800 line-clamp-3 leading-snug">${item.judul}</p>
+                                    </div>
+                                    <div class="mb-3 bg-slate-50 p-2 rounded-lg text-xs">
+                                        <div class="flex justify-between mb-1">
+                                            <span class="text-slate-500">Skema:</span>
+                                            <span class="font-bold text-indigo-700">${item.skema || 'Belum Terdeteksi'}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-slate-500">Dosen Pembimbing:</span>
+                                            <span class="font-bold text-slate-700 text-right">${dosenName} <br><span class="text-green-600">(${dosenMatch}% Cocok)</span></span>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="w-full py-2 bg-indigo-50 text-indigo-700 hover:bg-indigo-600 hover:text-white text-sm font-bold rounded-lg transition-colors applying-btn"
+                                            data-judul="${item.judul}" 
+                                            data-skema="${schemaName}"
+                                            data-dosen="${dosenId}">
+                                        Gunakan Ini
+                                    </button>
+                                </div>`;
+                                $results.append(cardHtml);
+                            });
+                            $results.show();
+                        } else {
+                            alert('Gagal mendapatkan rekomendasi. Coba ubah ide Anda menjadi sedikit lebih spesifik.');
+                        }
+                    },
+                    error: function(xhr, status, err) {
+                        $loading.addClass('hidden');
+                        $btn.prop('disabled', false).removeClass('opacity-50 cursor-not-allowed');
+                        alert('Terjadi kesalahan saat terhubung ke AI. Pastikan server AI berjalan.');
+                        console.error('AJAX Error:', status, err, xhr.responseText);
+                    }
+                });
+            });
+
+            // Handle "Gunakan Ini" click
+            $(document).on('click', '.applying-btn', function() {
+                let judul = $(this).attr('data-judul');
+                let skema = $(this).attr('data-skema');
+                let dosen = $(this).attr('data-dosen');
+
+                if(judul) $('#judul_kelompok').val(judul).focus();
+                
+                if(skema) {
+                    // Try to map exact matched schema or select by contains
+                    $('#skema option').each(function() {
+                        if($(this).val() === skema || $(this).text().includes(skema)) {
+                            $(this).prop('selected', true);
+                        }
+                    });
+                }
+
+                if(dosen) {
+                    $('#dosen_pembimbing_id').val(dosen);
+                }
+
+                // Smooth scroll to the form
+                $('html, body').animate({
+                    scrollTop: $("#nama_kelompok").offset().top - 100
+                }, 500);
             });
         });
     </script>

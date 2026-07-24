@@ -1,0 +1,7 @@
+id,idea,abstract,pkm_category
+UJI-01,Aplikasi pendeteksi wajah berbasis IoT untuk sistem absensi mahasiswa,Kami ingin membangun sistem absensi mahasiswa yang memakai pendeteksi wajah berbasis kamera dan mikrokontroler IoT agar kehadiran tercatat otomatis dan sulit dimanipulasi.,PKM-KC
+UJI-02,Prediksi curah hujan lokal menggunakan machine learning,Penelitian untuk membangun model prediksi curah hujan harian pada wilayah tertentu menggunakan data historis cuaca dan algoritme machine learning.,PKM-RE
+UJI-03,Pengaruh penggunaan gawai terhadap kesehatan mental remaja,Kajian sosial mengenai hubungan durasi penggunaan gawai dengan tingkat stres dan kecemasan pada remaja sekolah menengah.,PKM-RSH
+UJI-04,Pelatihan literasi digital bagi ibu rumah tangga di desa,Program pengabdian untuk meningkatkan kemampuan literasi digital ibu rumah tangga agar terhindar dari penipuan daring melalui pelatihan dan pendampingan.,PKM-PM
+UJI-05,Digitalisasi pencatatan penjualan untuk UMKM warung kelontong,Penerapan sistem kasir sederhana berbasis aplikasi untuk membantu mitra UMKM warung kelontong mencatat penjualan dan stok secara rapi.,PKM-PI
+UJI-06,Produk keripik pelepah pisang sebagai camilan sehat bernilai jual,Pengembangan produk camilan inovatif berbahan pelepah pisang yang memiliki nilai gizi dan potensi komersial bagi mahasiswa.,PKM-K

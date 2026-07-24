@@ -1,0 +1,3 @@
+mode,precision@3,recall@3(pool),ndcg@3,judul_skor_ahli(1-5),keberagaman_ahli(1-5),novelty_trigram(0-1),latency_ms_rata2
+retrieval_based,,,,,,0.9298,1851.5
+full_llm,,,,,,0.9528,25210.3333

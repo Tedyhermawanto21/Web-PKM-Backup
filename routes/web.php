@@ -73,6 +73,8 @@ Route::middleware('auth')->group(function () {
         Route::get('upload/{upload}/download', [App\Http\Controllers\Mahasiswa\UploadController::class, 'download'])->name('upload.download');
         Route::resource('upload', App\Http\Controllers\Mahasiswa\UploadController::class);
         Route::get('revisi', [App\Http\Controllers\Mahasiswa\RevisionController::class, 'index'])->name('revisi.index');
+        Route::post('pkm-ai/rekomendasi', [App\Http\Controllers\Mahasiswa\PkmAiController::class, 'generate'])->name('pkm_ai.generate');
+        Route::post('pkm-ai/experiment', [App\Http\Controllers\Mahasiswa\PkmAiController::class, 'experiment'])->name('pkm_ai.experiment');
     });
 
     // Dosen Dashboard

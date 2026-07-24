@@ -1,0 +1,10 @@
+set_code,case_id,mode
+S0001,UJI-01,retrieval_based
+S0002,UJI-02,full_llm
+S0003,UJI-02,retrieval_based
+S0004,UJI-03,retrieval_based
+S0005,UJI-04,full_llm
+S0006,UJI-04,retrieval_based
+S0007,UJI-05,retrieval_based
+S0008,UJI-06,retrieval_based
+S0009,UJI-06,full_llm

@@ -1,0 +1,7 @@
+scenario,jumlah_request,mode,latency_rata2_ms,wall_time_rata2_ms,berhasil,gagal,success_rate
+10 request,10,full_llm,257.1,265.8,0,10,0.0%
+10 request,10,retrieval_based,702.5,708.7,10,0,100.0%
+3 request,3,full_llm,404.33,412,0,3,0.0%
+3 request,3,retrieval_based,690.67,706,3,0,100.0%
+5 request,5,full_llm,278.8,287.6,0,5,0.0%
+5 request,5,retrieval_based,677.6,688.4,5,0,100.0%
